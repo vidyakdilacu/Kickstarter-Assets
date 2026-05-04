@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kickstarter Workshops — Responsible AI Activity</title>
+<style>
+:root {
+  --ms-blue: #0078D4;
+  --ms-blue-bright: #00BCF2;
+  --ms-blue-dark: #005A9E;
+  --ms-navy: #243A5E;
+  --ms-navy-soft: #2E4374;
+  --kickstarter-cyan: #18B8E8;
+  --paper: #FFFFFF;
+  --paper-soft: #FAFBFC;
+  --rule: #E1E5EA;
+  --ink: #242424;
+  --ink-soft: #424242;
+  --ink-muted: #707783;
+  --sticky-yellow: #FFF4A3;
+  --sticky-yellow-fold: #F5E68A;
+  --hover-bg: #F4F8FB;
+  --error-red: #D13438;
+  --error-bg: #FDE7E9;
+
+  /* Per-principle accent colors */
+  --c-fairness: #5B47C7;
+  --c-fairness-bg: #EFEAFB;
+  --c-reliability: #0E8A6F;
+  --c-reliability-bg: #E4F4EE;
+  --c-privacy: #C8417A;
+  --c-privacy-bg: #FBE9F2;
+  --c-inclusive: #C66A1F;
+  --c-inclusive-bg: #FCEEDE;
+  --c-transparency: #1B7BB8;
+  --c-transparency-bg: #E1F0F9;
+  --c-accountability: #4F4F4F;
+  --c-accountability-bg: #EDEDED;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--paper-soft);
+  color: var(--ink);
+  line-height: 1.5;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============== TOP STRIP ============== */
+.top-strip {
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  padding: 28px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.brand-logo {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 32px;
+  letter-spacing: -0.02em;
+  color: var(--kickstarter-cyan);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.brand-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.brand-divider::before,
+.brand-divider::after {
+  content: '';
+  height: 2px;
+  flex: 1;
+  background: var(--kickstarter-cyan);
+  max-width: 40px;
+}
+
+.brand-tagline {
+  font-size: 14px;
+  color: var(--kickstarter-cyan);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.sticky-note {
+  background: var(--sticky-yellow);
+  padding: 16px 20px;
+  max-width: 380px;
+  position: relative;
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.5;
+  box-shadow: 2px 3px 8px rgba(0,0,0,0.08), 1px 1px 0 rgba(0,0,0,0.04);
+  transform: rotate(-1deg);
+}
+
+.sticky-note::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 22px;
+  height: 22px;
+  background: linear-gradient(135deg, transparent 50%, var(--sticky-yellow-fold) 50%);
+  box-shadow: -1px -1px 2px rgba(0,0,0,0.06);
+}
+
+.sticky-note strong {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.sticky-note ul {
+  list-style: none;
+  display: grid;
+  gap: 4px;
+}
+
+.sticky-note ul li {
+  padding-left: 14px;
+  position: relative;
+}
+
+.sticky-note ul li::before {
+  content: '•';
+  position: absolute;
+  left: 4px;
+  font-weight: 700;
+}
+
+/* ============== INTRO BANNER ============== */
+.intro-banner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 22px 48px 0;
+}
+
+.intro-banner-inner {
+  background: linear-gradient(135deg, var(--ms-navy) 0%, var(--ms-navy-soft) 100%);
+  color: white;
+  padding: 22px 28px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.intro-banner h1 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+
+.intro-banner p {
+  font-size: 13.5px;
+  opacity: 0.85;
+  line-height: 1.45;
+  max-width: 600px;
+}
+
+.intro-banner .meta-pills {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.intro-banner .meta-pills span {
+  background: rgba(255,255,255,0.15);
+  padding: 6px 12px;
+  border-radius: 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* ============== SCENARIO CARD ============== */
+.scenario-section {
+  max-width: 1200px;
+  margin: 28px auto 0;
+  padding: 0 48px;
+}
+
+.scenario-card {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-left: 5px solid var(--ms-blue);
+  border-radius: 6px;
+  padding: 24px 28px;
+}
+
+.scenario-card .scenario-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ms-blue);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.scenario-card h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ms-navy);
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+
+.scenario-card p {
+  font-size: 14.5px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+/* ============== USER INFO BAR ============== */
+.user-bar {
+  max-width: 1200px;
+  margin: 28px auto 0;
+  padding: 0 48px;
+}
+
+.user-bar-inner {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 20px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 28px;
+  align-items: end;
+}
+
+.user-field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ms-navy);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.user-field input,
+.user-field select {
+  width: 100%;
+  font-family: inherit;
+  font-size: 14px;
+  padding: 9px 12px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 4px;
+  transition: border-color 0.15s;
+}
+
+.user-field input:focus,
+.user-field select:focus {
+  outline: none;
+  border-color: var(--ms-blue);
+  box-shadow: 0 0 0 3px rgba(0,120,212,0.12);
+}
+
+.user-field-helper {
+  font-size: 11px;
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
+
+/* ============== PRINCIPLE PICKER ============== */
+.picker-section {
+  max-width: 1200px;
+  margin: 36px auto 0;
+  padding: 0 48px;
+}
+
+.section-head {
+  margin-bottom: 16px;
+}
+
+.section-head h2 {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ms-navy);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+
+.section-head p {
+  font-size: 13.5px;
+  color: var(--ink-muted);
+  line-height: 1.45;
+}
+
+.principles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.pcard {
+  position: relative;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 18px 18px 20px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  min-height: 160px;
+}
+
+.pcard:hover {
+  border-color: var(--ms-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,120,212,0.12);
+}
+
+.pcard.selected {
+  border-width: 2px;
+  padding: 17px 17px 19px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+}
+
+.pcard-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+
+.pcard-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  align-self: flex-start;
+}
+
+.pcard-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ms-navy);
+  line-height: 1.25;
+  margin-bottom: 8px;
+}
+
+.pcard-desc {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  line-height: 1.45;
+  flex: 1;
+}
+
+.pcard-footer {
+  margin-top: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--kickstarter-cyan);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-top: 1px solid var(--rule);
+  padding-top: 8px;
+}
+
+.pcard.selected .pcard-footer {
+  border-top-color: currentColor;
+}
+
+/* Per-principle theming */
+.pcard[data-p="fairness"] .pcard-icon { background: var(--c-fairness-bg); color: var(--c-fairness); }
+.pcard[data-p="fairness"] .pcard-tag { color: var(--c-fairness); }
+.pcard[data-p="fairness"].selected { border-color: var(--c-fairness); background: var(--c-fairness-bg); }
+
+.pcard[data-p="reliability"] .pcard-icon { background: var(--c-reliability-bg); color: var(--c-reliability); }
+.pcard[data-p="reliability"] .pcard-tag { color: var(--c-reliability); }
+.pcard[data-p="reliability"].selected { border-color: var(--c-reliability); background: var(--c-reliability-bg); }
+
+.pcard[data-p="privacy"] .pcard-icon { background: var(--c-privacy-bg); color: var(--c-privacy); }
+.pcard[data-p="privacy"] .pcard-tag { color: var(--c-privacy); }
+.pcard[data-p="privacy"].selected { border-color: var(--c-privacy); background: var(--c-privacy-bg); }
+
+.pcard[data-p="inclusiveness"] .pcard-icon { background: var(--c-inclusive-bg); color: var(--c-inclusive); }
+.pcard[data-p="inclusiveness"] .pcard-tag { color: var(--c-inclusive); }
+.pcard[data-p="inclusiveness"].selected { border-color: var(--c-inclusive); background: var(--c-inclusive-bg); }
+
+.pcard[data-p="transparency"] .pcard-icon { background: var(--c-transparency-bg); color: var(--c-transparency); }
+.pcard[data-p="transparency"] .pcard-tag { color: var(--c-transparency); }
+.pcard[data-p="transparency"].selected { border-color: var(--c-transparency); background: var(--c-transparency-bg); }
+
+.pcard[data-p="accountability"] .pcard-icon { background: var(--c-accountability-bg); color: var(--c-accountability); }
+.pcard[data-p="accountability"] .pcard-tag { color: var(--c-accountability); }
+.pcard[data-p="accountability"].selected { border-color: var(--c-accountability); background: var(--c-accountability-bg); }
+
+/* ============== DEEP DIVE PANEL ============== */
+.deep-dive {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 48px;
+  display: none;
+}
+
+.deep-dive.shown {
+  display: block;
+  animation: slideDown 0.4s cubic-bezier(0.2, 0.8, 0.4, 1);
+  margin-top: 36px;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.deep-dive-card {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px -6px rgba(36,58,94,0.1);
+}
+
+.deep-dive-header {
+  padding: 22px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.deep-dive-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.deep-dive-icon-large {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.deep-dive-titles h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ms-navy);
+  letter-spacing: -0.01em;
+  margin-bottom: 2px;
+}
+
+.deep-dive-titles .pname-tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.change-btn {
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  background: transparent;
+  color: var(--ms-blue);
+  border: 1px solid var(--ms-blue);
+  padding: 7px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.change-btn:hover {
+  background: var(--ms-blue);
+  color: white;
+}
+
+.deep-dive-body {
+  padding: 28px 32px;
+}
+
+.quote-block {
+  background: var(--paper-soft);
+  padding: 18px 22px;
+  border-left: 3px solid var(--ms-blue);
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 24px;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+.quote-block::before {
+  content: '"';
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ms-blue);
+  margin-right: 4px;
+  vertical-align: -4px;
+}
+
+.quote-block::after {
+  content: '"';
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ms-blue);
+  margin-left: 2px;
+  vertical-align: -4px;
+}
+
+.challenge-block {
+  margin-bottom: 28px;
+  padding: 18px 22px;
+  background: #FFF8E1;
+  border-left: 3px solid #B08D3A;
+  border-radius: 0 4px 4px 0;
+}
+
+.challenge-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8C6E1B;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.challenge-text {
+  font-size: 14.5px;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* ============== PROMPTS ============== */
+.prompts-section h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ms-navy);
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.prompts-section h4 .num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ms-blue);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.prompts-section .prompt-helper {
+  font-size: 12.5px;
+  color: var(--ink-muted);
+  margin-bottom: 8px;
+  margin-left: 32px;
+  line-height: 1.45;
+}
+
+.prompts-section textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 5px;
+  min-height: 90px;
+  resize: vertical;
+  line-height: 1.55;
+  margin-bottom: 22px;
+  transition: border-color 0.15s;
+}
+
+.prompts-section textarea:focus {
+  outline: none;
+  border-color: var(--ms-blue);
+  box-shadow: 0 0 0 3px rgba(0,120,212,0.12);
+}
+
+.prompts-section textarea:last-of-type {
+  margin-bottom: 12px;
+}
+
+/* ============== FOOTER / SUBMIT ============== */
+.poster-footer {
+  max-width: 1200px;
+  margin: 32px auto 0;
+  padding: 32px 48px 56px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.poster-footer-left {
+  flex: 1;
+}
+
+.error-banner {
+  padding: 10px 16px;
+  background: var(--error-bg);
+  border-left: 3px solid var(--error-red);
+  color: var(--error-red);
+  font-size: 13px;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 14px;
+  display: none;
+}
+
+.error-banner.shown { display: block; }
+
+.btn-primary {
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  background: var(--ms-blue);
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: background 0.15s, transform 0.1s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.btn-primary:hover { background: var(--ms-blue-dark); }
+.btn-primary:active { transform: translateY(1px); }
+.btn-primary:disabled {
+  background: #BDBDBD;
+  cursor: not-allowed;
+}
+
+.ms-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.ms-logo-tiles {
+  display: grid;
+  grid-template-columns: 10px 10px;
+  grid-template-rows: 10px 10px;
+  gap: 1px;
+}
+
+.ms-logo-tiles span:nth-child(1) { background: #F25022; }
+.ms-logo-tiles span:nth-child(2) { background: #7FBA00; }
+.ms-logo-tiles span:nth-child(3) { background: #00A4EF; }
+.ms-logo-tiles span:nth-child(4) { background: #FFB900; }
+
+/* ============== RESULTS PANEL ============== */
+#results-panel {
+  display: none;
+  max-width: 1200px;
+  margin: 0 auto 60px;
+  padding: 0 48px;
+}
+
+#results-panel.shown {
+  display: block;
+  animation: fadeUp 0.45s cubic-bezier(0.2, 0.8, 0.4, 1);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.results-instructions {
+  margin-bottom: 24px;
+  padding: 18px 24px;
+  background: #F1F8ED;
+  border-left: 4px solid #6FBA50;
+  border-radius: 0 4px 4px 0;
+}
+
+.results-instructions strong {
+  font-weight: 700;
+  color: #5AA53D;
+  display: block;
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+
+.results-instructions p {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+.results-instructions kbd {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-family: 'Consolas', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 2px;
+}
+
+.results-poster {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 4px 16px -4px rgba(36,58,94,0.1);
+  overflow: hidden;
+}
+
+.results-poster-top-strip {
+  height: 5px;
+}
+
+.results-poster-header {
+  padding: 28px 40px 22px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.results-poster-header-left h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--kickstarter-cyan);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.results-poster-header-left .subtitle {
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.results-poster-meta {
+  text-align: right;
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.results-poster-meta .respondent {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ms-navy);
+  margin-bottom: 4px;
+}
+
+.results-poster-meta .role-tag {
+  display: inline-block;
+  background: #E8F4FD;
+  color: var(--ms-blue-dark);
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-top: 4px;
+}
+
+.results-principle-banner {
+  padding: 22px 40px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.results-principle-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.results-principle-titles h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ms-navy);
+  letter-spacing: -0.01em;
+  margin-bottom: 2px;
+}
+
+.results-principle-titles .ptag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.results-poster-body {
+  padding: 28px 40px 32px;
+}
+
+.results-challenge {
+  padding: 16px 20px;
+  background: #FFF8E1;
+  border-left: 3px solid #B08D3A;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 24px;
+}
+
+.results-challenge-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8C6E1B;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.results-challenge-text {
+  font-size: 13.5px;
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+.results-answer {
+  margin-bottom: 22px;
+}
+
+.results-answer-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ms-navy);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.results-answer-label .num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--ms-blue);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.results-answer-text {
+  padding: 12px 16px;
+  background: var(--paper-soft);
+  border-radius: 4px;
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.55;
+  border: 1px solid var(--rule);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.results-answer-text.empty {
+  font-style: italic;
+  color: var(--ink-muted);
+}
+
+.results-poster-footer {
+  padding: 18px 40px;
+  background: var(--paper-soft);
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+.results-poster-footer .brand-mini {
+  font-weight: 700;
+  color: var(--kickstarter-cyan);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.action-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.action-btn:hover {
+  border-color: var(--ms-blue);
+  background: var(--hover-bg);
+  color: var(--ms-blue-dark);
+}
+
+.action-btn.primary {
+  background: var(--ms-blue);
+  color: white;
+  border-color: var(--ms-blue);
+}
+
+.action-btn.primary:hover {
+  background: var(--ms-blue-dark);
+  color: white;
+}
+
+.action-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ============== RESPONSIVE ============== */
+@media (max-width: 980px) {
+  .principles-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 720px) {
+  .top-strip, .intro-banner, .scenario-section, .user-bar, .picker-section,
+  .deep-dive, .poster-footer, #results-panel {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .top-strip { padding-top: 20px; padding-bottom: 20px; }
+  .user-bar-inner { grid-template-columns: 1fr; gap: 16px; }
+  .principles-grid { grid-template-columns: 1fr; }
+  .deep-dive-header { flex-direction: column; align-items: flex-start; }
+  .results-poster-header { flex-direction: column; }
+  .results-poster-meta { text-align: left; }
+  .results-poster-header,
+  .results-poster-body,
+  .results-poster-footer,
+  .results-principle-banner { padding-left: 24px; padding-right: 24px; }
+  .intro-banner-inner { flex-direction: column; align-items: flex-start; }
+  .sticky-note { transform: none; }
+}
+
+@media print {
+  body { background: white; }
+  .top-strip, .intro-banner, .scenario-section, .user-bar, .picker-section,
+  .deep-dive, .poster-footer { display: none; }
+  #results-panel { padding: 0; margin: 0; max-width: 100%; }
+  .results-instructions, .action-row { display: none; }
+  .results-poster {
+    box-shadow: none;
+    border: 1px solid #ccc;
+    page-break-inside: avoid;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ TOP BRAND STRIP ============ -->
+<header class="top-strip">
+  <div class="brand">
+    <div class="brand-logo">Kickstarter</div>
+    <div class="brand-divider">
+      <span class="brand-tagline">Workshops</span>
+    </div>
+  </div>
+
+  <div class="sticky-note">
+    <strong>Tips:</strong>
+    <ul>
+      <li>Pick the principle that interests you most — there's no right answer</li>
+      <li>If working as a group, discuss together and agree on one principle</li>
+      <li>If working individually, pick whichever feels most relevant to your role</li>
+    </ul>
+  </div>
+</header>
+
+<!-- ============ INTRO BANNER ============ -->
+<div class="intro-banner">
+  <div class="intro-banner-inner">
+    <div>
+      <h1>Module 2 — Responsible AI Activity</h1>
+      <p>Pick one of Microsoft's six Responsible AI principles and work through a real-world HR agent challenge. You'll identify the risks, propose safeguards, and connect to examples you've seen.</p>
+    </div>
+    <div class="meta-pills">
+      <span>⏱ 15 min</span>
+      <span>🔒 Private</span>
+      <span>📷 Screenshot to share</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCENARIO ============ -->
+<section class="scenario-section">
+  <div class="scenario-card">
+    <div class="scenario-label">Workshop Scenario</div>
+    <h2>HR Agent at a fictional organisation</h2>
+    <p>An HR department is deploying a generative AI agent to help employees with HR-related queries — leave balances, performance reviews, policy clarifications. The agent connects with the HR management system and other internal data sources. The team wants the agent to uphold all six Responsible AI principles. But upon review, they've identified specific challenges that need to be addressed.</p>
+  </div>
+</section>
+
+<!-- ============ USER INFO BAR ============ -->
+<div class="user-bar">
+  <div class="user-bar-inner">
+    <div class="user-field">
+      <label for="name-input">Your Name <span style="color: var(--ink-muted); font-weight: 400; text-transform: none; letter-spacing: 0;">(optional)</span></label>
+      <input type="text" id="name-input" placeholder="Your name (or leave blank to stay anonymous)" autocomplete="name">
+      <div class="user-field-helper">Optional — leave blank if you'd rather stay anonymous</div>
+    </div>
+    <div class="user-field">
+      <label for="role-select">Your Role</label>
+      <select id="role-select">
+        <option value="">— Select your role —</option>
+        <option value="IT / Power Platform Administrator">IT / Power Platform Administrator</option>
+        <option value="Security or Compliance Professional">Security or Compliance Professional</option>
+        <option value="Solution or Enterprise Architect">Solution or Enterprise Architect</option>
+        <option value="Adoption or Change Management Lead">Adoption or Change Management Lead</option>
+        <option value="Citizen Developer / Maker">Citizen Developer / Maker</option>
+        <option value="Business Analyst or Process Owner">Business Analyst or Process Owner</option>
+        <option value="Manager or Team Lead">Manager or Team Lead</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PRINCIPLE PICKER ============ -->
+<section class="picker-section">
+  <div class="section-head">
+    <h2>Pick one Responsible AI principle to explore</h2>
+    <p>Each principle has its own challenge for the HR agent. Click a card to dive deeper into that one. You can change your selection at any time.</p>
+  </div>
+
+  <div class="principles-grid" id="principles-grid">
+    <!-- populated by JS -->
+  </div>
+</section>
+
+<!-- ============ DEEP DIVE PANEL ============ -->
+<section class="deep-dive" id="deep-dive">
+  <div class="deep-dive-card">
+    <div class="deep-dive-header" id="deep-dive-header">
+      <!-- populated by JS -->
+    </div>
+
+    <div class="deep-dive-body">
+      <div class="quote-block" id="dd-quote"></div>
+
+      <div class="challenge-block">
+        <span class="challenge-label">The challenge for the HR agent</span>
+        <div class="challenge-text" id="dd-challenge"></div>
+      </div>
+
+      <div class="prompts-section">
+        <h4><span class="num">1</span> Identify potential risks</h4>
+        <p class="prompt-helper" id="dd-helper-1"></p>
+        <textarea id="answer-1" placeholder="Type your thinking here..."></textarea>
+
+        <h4><span class="num">2</span> Explore potential solutions</h4>
+        <p class="prompt-helper" id="dd-helper-2"></p>
+        <textarea id="answer-2" placeholder="What safeguards or actions would you put in place?"></textarea>
+
+        <h4><span class="num">3</span> Connect to real-world examples</h4>
+        <p class="prompt-helper" id="dd-helper-3"></p>
+        <textarea id="answer-3" placeholder="Have you seen something similar in another system or organisation?"></textarea>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER / SUBMIT ============ -->
+<footer class="poster-footer">
+  <div class="poster-footer-left">
+    <div id="error-banner" class="error-banner"></div>
+    <button class="btn-primary" id="show-results-btn" disabled>Show my answers →</button>
+    <p style="font-size: 12px; color: var(--ink-muted); margin-top: 8px;">Pick a principle above and answer at least one prompt to enable the button.</p>
+  </div>
+
+  <div class="ms-logo">
+    <div class="ms-logo-tiles">
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <span>Microsoft</span>
+  </div>
+</footer>
+
+<!-- ============ RESULTS PANEL ============ -->
+<section id="results-panel">
+
+  <div class="results-instructions">
+    <strong>Almost done — one last step.</strong>
+    <p>Take a screenshot of the card below and send it to your facilitator. On Windows: press <kbd>Win</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd>. On Mac: press <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>4</kbd>. Then attach the image to an email or chat message back to your facilitator.</p>
+  </div>
+
+  <article class="results-poster" id="results-card">
+    <div class="results-poster-top-strip" id="result-top-strip"></div>
+
+    <div class="results-poster-header">
+      <div class="results-poster-header-left">
+        <h2>Kickstarter Workshops</h2>
+        <div class="subtitle">Module 2 · Responsible AI Activity · Response Summary</div>
+      </div>
+      <div class="results-poster-meta">
+        <div class="respondent" id="result-name">Anonymous Response</div>
+        <div id="result-date"></div>
+        <div class="role-tag" id="result-role">—</div>
+      </div>
+    </div>
+
+    <div class="results-principle-banner" id="result-principle-banner">
+      <!-- populated by JS -->
+    </div>
+
+    <div class="results-poster-body">
+      <div class="results-challenge">
+        <span class="results-challenge-label">The challenge explored</span>
+        <div class="results-challenge-text" id="result-challenge"></div>
+      </div>
+
+      <div class="results-answer">
+        <div class="results-answer-label"><span class="num">1</span> Identified risks</div>
+        <div class="results-answer-text" id="result-answer-1"></div>
+      </div>
+
+      <div class="results-answer">
+        <div class="results-answer-label"><span class="num">2</span> Proposed solutions / safeguards</div>
+        <div class="results-answer-text" id="result-answer-2"></div>
+      </div>
+
+      <div class="results-answer">
+        <div class="results-answer-label"><span class="num">3</span> Real-world examples / connections</div>
+        <div class="results-answer-text" id="result-answer-3"></div>
+      </div>
+    </div>
+
+    <div class="results-poster-footer">
+      <span class="brand-mini">Govern &amp; Secure AI Agents</span>
+      <span>Microsoft Kickstarter Workshops</span>
+    </div>
+  </article>
+
+  <div class="action-row">
+    <button class="action-btn primary" id="print-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print or save as PDF
+    </button>
+    <button class="action-btn" id="copy-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <span id="copy-btn-label">Copy as text</span>
+    </button>
+    <button class="action-btn" id="edit-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Edit my answers
+    </button>
+  </div>
+
+</section>
+
+<script>
+(function() {
+
+  // ============ DATA ============
+  // All scenarios sourced from the official Module 2 RAI Activity Assets deck
+  const PRINCIPLES = [
+    {
+      id: 'fairness',
+      name: 'Fairness',
+      icon: '⚖️',
+      tag: 'Fairness',
+      definition: 'How can we ensure that an AI system allocates opportunities, resources, or information in ways that are fair to the humans that use it?',
+      shortDesc: 'Are we being fair to everyone who uses this — across all employee groups and backgrounds?',
+      challenge: 'The HR agent sometimes provides more detailed or favourable responses to certain employee groups. For example, salaried employees may receive clearer or more comprehensive answers than hourly employees, leading to disparities in the support they receive.',
+      helper1: 'What risks could employees face if the agent treats different groups unequally? Think about access to information, perceived favouritism, and longer-term trust impacts.',
+      helper2: 'What actions, safeguards, or practices could help ensure the system responds fairly to all employees regardless of role, location, or seniority?',
+      helper3: 'Can you think of other situations — at work or in society — where fairness in AI or automated decision-making has been a challenge?',
+    },
+    {
+      id: 'reliability',
+      name: 'Reliability & Safety',
+      icon: '🛡️',
+      tag: 'Reliability & Safety',
+      definition: 'How might the system function well for people across different use conditions and contexts, including ones it was not originally intended for?',
+      shortDesc: 'Can we trust this agent to work well — even in tough or unexpected situations?',
+      challenge: 'The HR agent sometimes provides outdated or inaccurate information — for example, incorrect leave balances or out-of-date policy details. When this happens, employees can become confused, take wrong actions, and lose trust in both the system and HR processes.',
+      helper1: 'What risks could employees face when the agent gives unreliable answers? Think about decisions made on bad information, downstream confusion, and the cost of correcting mistakes.',
+      helper2: 'What safeguards or quality checks could help ensure the system provides accurate and dependable information consistently?',
+      helper3: 'Can you think of times when an automated system or AI failure caused real-world problems for users?',
+    },
+    {
+      id: 'privacy',
+      name: 'Privacy & Security',
+      icon: '🔒',
+      tag: 'Privacy & Security',
+      definition: 'How do we ensure AI systems protect personal and organisational information, while respecting user privacy?',
+      shortDesc: 'Is personal and organisational information protected — and only seen by the right people?',
+      challenge: 'The agent occasionally references sensitive employee data — like salary figures or performance review details — in its responses. Sensitive data could be exposed if authentication is weak or if the agent accesses data outside the requesting employee\'s permission scope.',
+      helper1: 'What specific privacy risks could arise? Think about insider misuse, oversharing across departments, and exposure to people who shouldn\'t see the data.',
+      helper2: 'What technical or policy measures could ensure sensitive employee data is properly protected — both inside the system and at the edges where the agent connects to other tools?',
+      helper3: 'Can you recall cases where a system exposed personal information due to weak controls? What was the impact?',
+    },
+    {
+      id: 'inclusiveness',
+      name: 'Inclusiveness',
+      icon: '🌍',
+      tag: 'Inclusiveness',
+      definition: 'How do we design AI systems so they are accessible and usable by people with a wide range of abilities, backgrounds, and needs?',
+      shortDesc: 'Does this work for everyone — across different abilities, languages, and backgrounds?',
+      challenge: 'The HR agent\'s responses are not consistently inclusive. For instance, it struggles with multilingual queries from employees whose first language isn\'t English, and it isn\'t fully optimised for employees who rely on assistive technologies such as screen readers.',
+      helper1: 'What risks could employees face if the agent doesn\'t work well for them? Think about exclusion, frustration, and the second-class experience this creates.',
+      helper2: 'What design choices, accessibility standards, multi-lingual support, or testing practices could help ensure the agent works well for ALL employees?',
+      helper3: 'Have you seen technology exclude or disadvantage a group of users in your past experience?',
+    },
+    {
+      id: 'transparency',
+      name: 'Transparency',
+      icon: '🔎',
+      tag: 'Transparency',
+      definition: 'How can we ensure that people understand how AI systems make decisions, generate responses, or access data?',
+      shortDesc: 'Can we explain how this agent works — to a non-technical user, in plain language?',
+      challenge: 'When employees ask the HR agent about policies or benefits, it gives an answer but doesn\'t explain where the information came from. There\'s no way to verify the source. This lack of visibility makes it hard to trust or challenge the response — and impossible to know if the answer is up to date.',
+      helper1: 'What risks could employees face when they can\'t see how the agent reached its answer? Think about misplaced trust, inability to verify, and the cost of acting on a wrong answer.',
+      helper2: 'What actions could make the agent\'s decision-making process clearer and more explainable — without overwhelming users with technical detail?',
+      helper3: 'Can you think of times when a lack of transparency in an AI or automated system caused real confusion or mistrust?',
+    },
+    {
+      id: 'accountability',
+      name: 'Accountability',
+      icon: '📝',
+      tag: 'Accountability',
+      definition: 'How do we make sure there is clear responsibility for the outcomes and decisions influenced by AI systems?',
+      shortDesc: 'Who is responsible if something goes wrong with this agent — and how do they take responsibility?',
+      challenge: 'The HR agent occasionally provides incorrect guidance — for example, about leave eligibility or performance reviews. When this happens, it\'s unclear whether responsibility lies with the AI itself, with HR staff who deployed it, or with IT who configured it. Employees end up without a clear path for resolution.',
+      helper1: 'What risks could employees face when nobody owns the outcome? Think about resolution delays, finger-pointing across teams, and erosion of trust in the whole HR function.',
+      helper2: 'What processes or governance measures could clarify who is responsible for AI-driven outcomes — both during normal operation and when things go wrong?',
+      helper3: 'Have you seen instances where unclear accountability in automated systems led to real problems for the people affected?',
+    },
+  ];
+
+  const principleMap = {};
+  PRINCIPLES.forEach(p => principleMap[p.id] = p);
+
+  let selectedPrinciple = null;
+
+  // ============ RENDER PRINCIPLE CARDS ============
+  const grid = document.getElementById('principles-grid');
+  PRINCIPLES.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'pcard';
+    card.dataset.p = p.id;
+    card.innerHTML = `
+      <div class="pcard-icon">${p.icon}</div>
+      <div class="pcard-tag">RAI Principle</div>
+      <div class="pcard-title">${p.name}</div>
+      <div class="pcard-desc">${p.shortDesc}</div>
+      <div class="pcard-footer">Pick to explore</div>
+    `;
+    card.addEventListener('click', () => selectPrinciple(p.id));
+    grid.appendChild(card);
+  });
+
+  // ============ SELECT PRINCIPLE ============
+  function selectPrinciple(id) {
+    selectedPrinciple = id;
+    const p = principleMap[id];
+
+    // Update card visuals
+    document.querySelectorAll('.pcard').forEach(c => {
+      c.classList.toggle('selected', c.dataset.p === id);
+    });
+
+    // Populate deep-dive
+    const header = document.getElementById('deep-dive-header');
+    header.innerHTML = `
+      <div class="deep-dive-header-left">
+        <div class="deep-dive-icon-large" style="background: var(--c-${id}-bg); color: var(--c-${id});">${p.icon}</div>
+        <div class="deep-dive-titles">
+          <h3>${p.name}</h3>
+          <span class="pname-tag" style="color: var(--c-${id});">Responsible AI Principle</span>
+        </div>
+      </div>
+      <button class="change-btn" id="back-to-pick-btn">← Pick a different principle</button>
+    `;
+    document.getElementById('back-to-pick-btn').addEventListener('click', backToPick);
+
+    document.getElementById('dd-quote').textContent = p.definition;
+    document.getElementById('dd-challenge').textContent = p.challenge;
+    document.getElementById('dd-helper-1').textContent = p.helper1;
+    document.getElementById('dd-helper-2').textContent = p.helper2;
+    document.getElementById('dd-helper-3').textContent = p.helper3;
+
+    // Show panel
+    document.getElementById('deep-dive').classList.add('shown');
+
+    // Smooth scroll
+    setTimeout(() => {
+      document.getElementById('deep-dive').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+
+    updateSubmitButton();
+  }
+
+  function backToPick() {
+    document.getElementById('deep-dive').classList.remove('shown');
+    document.querySelector('.picker-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ============ ENABLE SUBMIT WHEN READY ============
+  const submitBtn = document.getElementById('show-results-btn');
+  const a1 = document.getElementById('answer-1');
+  const a2 = document.getElementById('answer-2');
+  const a3 = document.getElementById('answer-3');
+
+  function updateSubmitButton() {
+    const hasPrinciple = !!selectedPrinciple;
+    const hasAnswer = (a1.value.trim() + a2.value.trim() + a3.value.trim()).length > 0;
+    submitBtn.disabled = !(hasPrinciple && hasAnswer);
+  }
+
+  [a1, a2, a3].forEach(t => t.addEventListener('input', updateSubmitButton));
+
+  // ============ SUBMIT ============
+  const errorBanner = document.getElementById('error-banner');
+  const resultsPanel = document.getElementById('results-panel');
+
+  function showError(msg) {
+    errorBanner.textContent = msg;
+    errorBanner.classList.add('shown');
+    errorBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function clearError() {
+    errorBanner.classList.remove('shown');
+    errorBanner.textContent = '';
+  }
+
+  submitBtn.addEventListener('click', () => {
+    clearError();
+
+    const role = document.getElementById('role-select').value;
+    if (!role) { showError('Please pick your role at the top of the page.'); return; }
+    if (!selectedPrinciple) { showError('Please pick a Responsible AI principle above.'); return; }
+    if (!a1.value.trim() && !a2.value.trim() && !a3.value.trim()) {
+      showError('Please answer at least one of the three prompts.');
+      return;
+    }
+
+    const p = principleMap[selectedPrinciple];
+    const name = document.getElementById('name-input').value.trim();
+
+    document.getElementById('result-name').textContent = name || 'Anonymous Response';
+    const dateStr = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('result-date').textContent = dateStr;
+    document.getElementById('result-role').textContent = role;
+
+    // Top strip color
+    const stripColors = {
+      fairness: 'linear-gradient(90deg, var(--c-fairness) 0%, #8B7AD9 100%)',
+      reliability: 'linear-gradient(90deg, var(--c-reliability) 0%, #4FA593 100%)',
+      privacy: 'linear-gradient(90deg, var(--c-privacy) 0%, #DB7BA0 100%)',
+      inclusiveness: 'linear-gradient(90deg, var(--c-inclusive) 0%, #DC9559 100%)',
+      transparency: 'linear-gradient(90deg, var(--c-transparency) 0%, #5BA3CF 100%)',
+      accountability: 'linear-gradient(90deg, var(--c-accountability) 0%, #777 100%)',
+    };
+    document.getElementById('result-top-strip').style.background = stripColors[selectedPrinciple];
+
+    // Principle banner
+    const banner = document.getElementById('result-principle-banner');
+    banner.style.background = `var(--c-${selectedPrinciple}-bg)`;
+    banner.innerHTML = `
+      <div class="results-principle-icon" style="background: white; color: var(--c-${selectedPrinciple});">${p.icon}</div>
+      <div class="results-principle-titles">
+        <h3>${p.name}</h3>
+        <span class="ptag" style="color: var(--c-${selectedPrinciple});">Responsible AI Principle Explored</span>
+      </div>
+    `;
+
+    document.getElementById('result-challenge').textContent = p.challenge;
+
+    setAnswerText('result-answer-1', a1.value);
+    setAnswerText('result-answer-2', a2.value);
+    setAnswerText('result-answer-3', a3.value);
+
+    resultsPanel.classList.add('shown');
+    setTimeout(() => {
+      resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  });
+
+  function setAnswerText(elId, val) {
+    const el = document.getElementById(elId);
+    const trimmed = val.trim();
+    if (trimmed) {
+      el.textContent = trimmed;
+      el.classList.remove('empty');
+    } else {
+      el.textContent = '— No response provided —';
+      el.classList.add('empty');
+    }
+  }
+
+  // ============ ACTION BUTTONS ============
+  document.getElementById('print-btn').addEventListener('click', () => window.print());
+
+  document.getElementById('copy-btn').addEventListener('click', () => {
+    const p = principleMap[selectedPrinciple];
+    const name = document.getElementById('result-name').textContent;
+    const date = document.getElementById('result-date').textContent;
+    const role = document.getElementById('result-role').textContent;
+    const challenge = document.getElementById('result-challenge').textContent;
+    const ans1 = document.getElementById('result-answer-1').textContent;
+    const ans2 = document.getElementById('result-answer-2').textContent;
+    const ans3 = document.getElementById('result-answer-3').textContent;
+
+    const text = [
+      'KICKSTARTER WORKSHOPS — RESPONSIBLE AI ACTIVITY',
+      'Govern & Secure AI Agents · Module 2',
+      '',
+      name,
+      date,
+      'Role: ' + role,
+      '',
+      'PRINCIPLE EXPLORED: ' + p.name.toUpperCase(),
+      '',
+      'CHALLENGE',
+      challenge,
+      '',
+      '1. IDENTIFIED RISKS',
+      ans1,
+      '',
+      '2. PROPOSED SOLUTIONS / SAFEGUARDS',
+      ans2,
+      '',
+      '3. REAL-WORLD EXAMPLES / CONNECTIONS',
+      ans3,
+    ].join('\n');
+
+    navigator.clipboard.writeText(text).then(() => {
+      const label = document.getElementById('copy-btn-label');
+      const original = label.textContent;
+      label.textContent = 'Copied ✓';
+      setTimeout(() => { label.textContent = original; }, 2000);
+    }).catch(() => alert('Could not copy. Please take a screenshot instead.'));
+  });
+
+  document.getElementById('edit-btn').addEventListener('click', () => {
+    resultsPanel.classList.remove('shown');
+    document.getElementById('deep-dive').scrollIntoView({ behavior: 'smooth' });
+  });
+})();
+</script>
+
+</body>
+</html>
