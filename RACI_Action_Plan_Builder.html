@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kickstarter Workshops — RACI Action Plan Builder</title>
+<style>
+:root {
+  --ms-blue: #0078D4;
+  --ms-blue-bright: #00BCF2;
+  --ms-blue-dark: #005A9E;
+  --ms-navy: #243A5E;
+  --ms-navy-soft: #2E4374;
+  --kickstarter-cyan: #18B8E8;
+  --paper: #FFFFFF;
+  --paper-soft: #FAFBFC;
+  --rule: #E1E5EA;
+  --ink: #242424;
+  --ink-soft: #424242;
+  --ink-muted: #707783;
+  --sticky-yellow: #FFF4A3;
+  --sticky-yellow-fold: #F5E68A;
+  --hover-bg: #F4F8FB;
+  --error-red: #D13438;
+  --error-bg: #FDE7E9;
+  --warn-amber: #B08D3A;
+  --warn-amber-bg: #FFF8E1;
+  --success-green: #107C41;
+  --success-bg: #DFF0E5;
+
+  /* Category colors for initiatives */
+  --cat-data: #6B2D8C;
+  --cat-identity: #0078D4;
+  --cat-environment: #107C41;
+  --cat-monitoring: #DA7B11;
+  --cat-rai: #C0392B;
+  --cat-maker: #E3008C;
+
+  /* RACI letter colors */
+  --r-color: #C0392B;
+  --a-color: #DA7B11;
+  --c-color: #0078D4;
+  --i-color: #6FBA50;
+
+  /* Horizon colors */
+  --h-3mo: #C0392B;
+  --h-6mo: #DA7B11;
+  --h-12mo: #6FBA50;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--paper-soft); color: var(--ink); line-height: 1.5; font-size: 15px; -webkit-font-smoothing: antialiased; }
+
+/* TOP STRIP */
+.top-strip { background: var(--paper); border-bottom: 1px solid var(--rule); padding: 28px 48px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 24px; }
+.brand-logo { font-weight: 700; font-size: 32px; letter-spacing: -0.02em; color: var(--kickstarter-cyan); line-height: 1; text-transform: uppercase; }
+.brand-divider { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+.brand-divider::before, .brand-divider::after { content: ''; height: 2px; flex: 1; background: var(--kickstarter-cyan); max-width: 40px; }
+.brand-tagline { font-size: 14px; color: var(--kickstarter-cyan); }
+.sticky-note { background: var(--sticky-yellow); padding: 16px 20px; max-width: 380px; position: relative; font-size: 13px; line-height: 1.5; box-shadow: 2px 3px 8px rgba(0,0,0,0.08); transform: rotate(-1deg); }
+.sticky-note::before { content: ''; position: absolute; bottom: 0; right: 0; width: 22px; height: 22px; background: linear-gradient(135deg, transparent 50%, var(--sticky-yellow-fold) 50%); }
+.sticky-note > strong { display: block; font-weight: 700; margin-bottom: 6px; font-size: 14px; }
+.sticky-note ol, .sticky-note ul { padding-left: 18px; }
+.sticky-note ol li { padding: 2px 0; }
+.sticky-note strong { font-weight: 700; }
+
+/* INTRO */
+.intro-banner { max-width: 1300px; margin: 0 auto; padding: 22px 48px 0; }
+.intro-banner-inner { background: linear-gradient(135deg, var(--ms-navy) 0%, var(--ms-navy-soft) 100%); color: white; padding: 22px 28px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+.intro-banner h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+.intro-banner p { font-size: 13.5px; opacity: 0.85; max-width: 700px; line-height: 1.45; }
+.intro-banner .meta-pills { display: flex; gap: 8px; flex-shrink: 0; }
+.intro-banner .meta-pills span { background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 14px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+
+.user-bar { max-width: 1300px; margin: 28px auto 0; padding: 0 48px; }
+.user-bar-inner { background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 20px 24px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px; align-items: end; }
+.user-field label { display: block; font-size: 11px; font-weight: 700; color: var(--ms-navy); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+.user-field input, .user-field select { width: 100%; font-family: inherit; font-size: 14px; padding: 9px 12px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); border-radius: 4px; }
+.user-field input:focus, .user-field select:focus { outline: none; border-color: var(--ms-blue); box-shadow: 0 0 0 3px rgba(0,120,212,0.12); }
+
+/* STEPPER */
+.stepper { max-width: 1300px; margin: 36px auto 0; padding: 0 48px; }
+.stepper-inner { display: flex; gap: 0; background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; }
+.step-tab { flex: 1; padding: 18px 22px; cursor: pointer; border-right: 1px solid var(--rule); display: flex; align-items: center; gap: 14px; transition: background 0.15s; background: var(--paper); border: none; font-family: inherit; text-align: left; }
+.step-tab:last-child { border-right: none; }
+.step-tab:hover:not(.active) { background: var(--hover-bg); }
+.step-tab.active { background: linear-gradient(135deg, var(--ms-blue) 0%, var(--ms-blue-bright) 100%); color: white; }
+.step-tab.completed:not(.active) { background: var(--success-bg); }
+.step-tab .step-num { width: 36px; height: 36px; border-radius: 50%; background: var(--rule); color: var(--ink-muted); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+.step-tab.active .step-num { background: rgba(255,255,255,0.25); color: white; }
+.step-tab.completed:not(.active) .step-num { background: var(--success-green); color: white; }
+.step-tab .step-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.7; margin-bottom: 2px; }
+.step-tab .step-title { font-size: 15px; font-weight: 600; line-height: 1.2; }
+.step-tab.active .step-label { opacity: 0.85; }
+.step-tab .step-meta { font-size: 11px; margin-top: 4px; opacity: 0.6; }
+.step-tab.active .step-meta { opacity: 0.85; }
+
+/* PANELS */
+.step-panel { max-width: 1300px; margin: 28px auto 0; padding: 0 48px; display: none; }
+.step-panel.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.section-head { margin-bottom: 16px; }
+.section-head h3 { font-size: 20px; font-weight: 600; color: var(--ms-navy); line-height: 1.25; margin-bottom: 6px; }
+.section-head p { font-size: 13.5px; color: var(--ink-muted); line-height: 1.45; }
+
+.howto-banner { padding: 14px 18px; background: #E8F4FD; border-left: 4px solid var(--ms-blue); border-radius: 0 4px 4px 0; display: flex; gap: 12px; align-items: flex-start; margin-bottom: 22px; }
+.howto-banner .icon { width: 28px; height: 28px; border-radius: 50%; background: var(--ms-blue); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+.howto-banner .text { font-size: 13px; color: var(--ms-navy); line-height: 1.5; }
+.howto-banner .text strong { font-weight: 700; }
+
+/* INITIATIVE CARDS GRID (Step 1) */
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 14px; margin-bottom: 24px; }
+
+.init-card { position: relative; background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 16px 18px 18px; cursor: pointer; transition: all 0.15s; display: flex; flex-direction: column; gap: 10px; }
+.init-card:hover { border-color: var(--ms-blue); box-shadow: 0 4px 10px -2px rgba(0,120,212,0.15); transform: translateY(-2px); }
+.init-card.selected { border-color: var(--success-green); background: var(--success-bg); box-shadow: 0 4px 10px -2px rgba(16,124,65,0.2); }
+.init-card .check-mark { position: absolute; top: 12px; right: 12px; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--rule); background: var(--paper); display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
+.init-card.selected .check-mark { background: var(--success-green); border-color: var(--success-green); color: white; }
+.init-card.selected .check-mark::before { content: '✓'; color: white; font-weight: 700; font-size: 14px; }
+
+.init-card-cat { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 12px; font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: white; align-self: flex-start; max-width: calc(100% - 30px); }
+.init-card-cat[data-cat="data"] { background: var(--cat-data); }
+.init-card-cat[data-cat="identity"] { background: var(--cat-identity); }
+.init-card-cat[data-cat="environment"] { background: var(--cat-environment); }
+.init-card-cat[data-cat="monitoring"] { background: var(--cat-monitoring); }
+.init-card-cat[data-cat="rai"] { background: var(--cat-rai); }
+.init-card-cat[data-cat="maker"] { background: var(--cat-maker); }
+
+.init-card-title { font-size: 14.5px; font-weight: 700; color: var(--ms-navy); line-height: 1.3; padding-right: 28px; }
+.init-card-tool { font-size: 12.5px; color: var(--ink-soft); line-height: 1.45; }
+.init-card-tool strong { color: var(--ms-navy); font-weight: 600; }
+
+.init-card .horizon-bar { display: none; gap: 4px; padding-top: 8px; border-top: 1px solid rgba(16,124,65,0.2); margin-top: 4px; }
+.init-card.selected .horizon-bar { display: flex; }
+.horizon-btn { flex: 1; padding: 4px 6px; border: 1.5px solid var(--rule); background: var(--paper); border-radius: 4px; font-family: inherit; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s; user-select: none; color: var(--ink-muted); }
+.horizon-btn:hover { background: var(--hover-bg); }
+.horizon-btn.active[data-h="3mo"] { background: var(--h-3mo); border-color: var(--h-3mo); color: white; }
+.horizon-btn.active[data-h="6mo"] { background: var(--h-6mo); border-color: var(--h-6mo); color: white; }
+.horizon-btn.active[data-h="12mo"] { background: var(--h-12mo); border-color: var(--h-12mo); color: white; }
+
+.add-custom-btn { width: 100%; padding: 14px; border: 1.5px dashed var(--ms-blue); background: transparent; color: var(--ms-blue); border-radius: 6px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.add-custom-btn:hover { background: var(--hover-bg); border-style: solid; }
+
+/* CATEGORY FILTER */
+.category-filter { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; padding: 12px 16px; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; align-items: center; }
+.category-filter .filter-label { font-size: 11px; font-weight: 700; color: var(--ms-navy); letter-spacing: 0.06em; text-transform: uppercase; margin-right: 6px; }
+.cat-filter-btn { padding: 5px 11px; border: 1.5px solid var(--rule); background: var(--paper); color: var(--ink-muted); border-radius: 14px; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.cat-filter-btn:hover { background: var(--hover-bg); }
+.cat-filter-btn.active { background: var(--ms-navy); border-color: var(--ms-navy); color: white; }
+
+/* ROLES (Step 2) */
+.roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin-bottom: 24px; }
+
+.role-card { position: relative; background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px 16px; cursor: pointer; transition: all 0.15s; }
+.role-card:hover { border-color: var(--ms-blue); box-shadow: 0 4px 10px -2px rgba(0,120,212,0.15); transform: translateY(-2px); }
+.role-card.selected { border-color: var(--success-green); background: var(--success-bg); }
+.role-card .check-mark { position: absolute; top: 12px; right: 12px; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--rule); background: var(--paper); display: flex; align-items: center; justify-content: center; }
+.role-card.selected .check-mark { background: var(--success-green); border-color: var(--success-green); }
+.role-card.selected .check-mark::before { content: '✓'; color: white; font-weight: 700; font-size: 14px; }
+.role-card-name { font-size: 14.5px; font-weight: 700; color: var(--ms-navy); line-height: 1.3; padding-right: 28px; margin-bottom: 4px; }
+.role-card-cat { font-size: 11px; color: var(--ink-muted); margin-bottom: 6px; font-weight: 600; }
+.role-card-desc { font-size: 12.5px; color: var(--ink-soft); line-height: 1.45; margin-bottom: 8px; }
+
+.role-card .name-input-wrap { display: none; padding-top: 8px; border-top: 1px solid rgba(16,124,65,0.2); }
+.role-card.selected .name-input-wrap { display: block; }
+.role-card .name-input-wrap label { display: block; font-size: 10px; font-weight: 700; color: var(--ms-navy); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+.role-card .person-input { width: 100%; font-family: inherit; font-size: 12.5px; padding: 6px 9px; border: 1px solid var(--rule); background: var(--paper); border-radius: 4px; }
+
+/* RACI MATRIX (Step 3) */
+.raci-empty { padding: 30px 24px; background: var(--warn-amber-bg); border-left: 4px solid var(--warn-amber); border-radius: 0 4px 4px 0; text-align: center; color: #8C6E1B; font-weight: 600; font-size: 14px; }
+
+.raci-matrix-wrapper { background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; overflow: auto; max-height: 70vh; }
+.raci-matrix { width: 100%; border-collapse: collapse; min-width: 600px; }
+.raci-matrix th, .raci-matrix td { border: 1px solid var(--rule); padding: 8px; vertical-align: middle; font-size: 12.5px; }
+.raci-matrix th { background: var(--paper-soft); position: sticky; top: 0; z-index: 5; font-weight: 700; color: var(--ms-navy); }
+.raci-matrix th.row-header { left: 0; z-index: 10; min-width: 240px; max-width: 280px; text-align: left; vertical-align: top; padding-top: 12px; padding-bottom: 12px; }
+.raci-matrix td.row-header { background: var(--paper-soft); position: sticky; left: 0; z-index: 4; min-width: 240px; max-width: 280px; vertical-align: top; padding-top: 12px; padding-bottom: 12px; }
+.raci-matrix th:first-child { z-index: 11; }
+.raci-matrix .init-row-text { font-weight: 600; color: var(--ms-navy); line-height: 1.35; font-size: 13px; margin-bottom: 4px; }
+.raci-matrix .init-row-tool { font-size: 11px; color: var(--ink-muted); line-height: 1.35; }
+.raci-matrix .role-header-name { font-weight: 700; font-size: 12.5px; color: var(--ms-navy); margin-bottom: 2px; line-height: 1.2; }
+.raci-matrix .role-header-person { font-size: 10.5px; color: var(--ink-muted); font-weight: 400; line-height: 1.2; }
+.raci-matrix td.cell { background: white; cursor: pointer; text-align: center; min-width: 70px; max-width: 90px; padding: 4px; }
+.raci-matrix td.cell:hover { background: var(--hover-bg); }
+.raci-cell-buttons { display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; }
+.raci-letter { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--rule); background: var(--paper); color: var(--ink-muted); font-family: inherit; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.1s; user-select: none; padding: 0; line-height: 1; }
+.raci-letter:hover { transform: scale(1.1); }
+.raci-letter.active[data-l="R"] { background: var(--r-color); border-color: var(--r-color); color: white; }
+.raci-letter.active[data-l="A"] { background: var(--a-color); border-color: var(--a-color); color: white; }
+.raci-letter.active[data-l="C"] { background: var(--c-color); border-color: var(--c-color); color: white; }
+.raci-letter.active[data-l="I"] { background: var(--i-color); border-color: var(--i-color); color: white; }
+
+.raci-legend { padding: 14px 18px; background: var(--paper-soft); border-top: 1px solid var(--rule); display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; }
+.raci-legend-item { display: flex; align-items: center; gap: 6px; }
+.raci-legend-item .swatch { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 11px; flex-shrink: 0; }
+.raci-legend-item .swatch[data-l="R"] { background: var(--r-color); }
+.raci-legend-item .swatch[data-l="A"] { background: var(--a-color); }
+.raci-legend-item .swatch[data-l="C"] { background: var(--c-color); }
+.raci-legend-item .swatch[data-l="I"] { background: var(--i-color); }
+
+.horizon-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+.horizon-tab { padding: 8px 16px; border-radius: 18px; border: 1.5px solid var(--rule); background: var(--paper); color: var(--ink-muted); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.horizon-tab:hover { background: var(--hover-bg); }
+.horizon-tab.active[data-h="all"] { background: var(--ms-navy); border-color: var(--ms-navy); color: white; }
+.horizon-tab.active[data-h="3mo"] { background: var(--h-3mo); border-color: var(--h-3mo); color: white; }
+.horizon-tab.active[data-h="6mo"] { background: var(--h-6mo); border-color: var(--h-6mo); color: white; }
+.horizon-tab.active[data-h="12mo"] { background: var(--h-12mo); border-color: var(--h-12mo); color: white; }
+
+/* NAVIGATION */
+.step-nav { max-width: 1300px; margin: 24px auto 0; padding: 0 48px; display: flex; justify-content: space-between; gap: 16px; }
+.btn { font-family: inherit; font-size: 14px; font-weight: 600; padding: 11px 24px; border-radius: 4px; cursor: pointer; transition: all 0.15s; border: 1px solid; }
+.btn-secondary { background: var(--paper); color: var(--ms-blue); border-color: var(--ms-blue); }
+.btn-secondary:hover { background: var(--hover-bg); }
+.btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-primary { background: var(--ms-blue); color: white; border-color: var(--ms-blue); }
+.btn-primary:hover { background: var(--ms-blue-dark); }
+.btn-primary:disabled { background: #BDBDBD; border-color: #BDBDBD; cursor: not-allowed; }
+
+/* FOOTER */
+.poster-footer { max-width: 1300px; margin: 32px auto 0; padding: 32px 48px 56px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+.poster-footer-left { flex: 1; }
+.error-banner { padding: 10px 16px; background: var(--error-bg); border-left: 3px solid var(--error-red); color: var(--error-red); font-size: 13px; border-radius: 0 4px 4px 0; margin-bottom: 14px; display: none; }
+.error-banner.shown { display: block; }
+.btn-results { font-family: inherit; font-size: 15px; font-weight: 600; background: var(--success-green); color: white; border: none; padding: 12px 32px; border-radius: 4px; cursor: pointer; transition: background 0.15s; }
+.btn-results:hover { background: #0B6A37; }
+.btn-results:disabled { background: #BDBDBD; cursor: not-allowed; }
+
+.ms-logo { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 600; }
+.ms-logo-tiles { display: grid; grid-template-columns: 10px 10px; grid-template-rows: 10px 10px; gap: 1px; }
+.ms-logo-tiles span:nth-child(1) { background: #F25022; }
+.ms-logo-tiles span:nth-child(2) { background: #7FBA00; }
+.ms-logo-tiles span:nth-child(3) { background: #00A4EF; }
+.ms-logo-tiles span:nth-child(4) { background: #FFB900; }
+
+/* RESULTS */
+#results-panel { display: none; max-width: 1400px; margin: 0 auto 60px; padding: 0 48px; }
+#results-panel.shown { display: block; animation: fadeIn 0.5s ease; }
+
+.results-instructions { margin-bottom: 24px; padding: 18px 24px; background: var(--success-bg); border-left: 4px solid var(--success-green); border-radius: 0 4px 4px 0; }
+.results-instructions strong { font-weight: 700; color: var(--success-green); display: block; margin-bottom: 4px; font-size: 15px; }
+.results-instructions p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.55; }
+.results-instructions kbd { background: var(--paper); border: 1px solid var(--rule); border-radius: 3px; padding: 1px 6px; font-family: monospace; font-size: 12px; font-weight: 600; }
+
+.results-poster { background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 4px 16px -4px rgba(36,58,94,0.1); overflow: hidden; }
+.results-poster-top-strip { height: 5px; background: linear-gradient(90deg, var(--cat-rai), var(--cat-data), var(--cat-identity), var(--cat-environment), var(--cat-monitoring), var(--cat-maker)); }
+.results-poster-header { padding: 28px 40px 22px; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
+.results-poster-header h2 { font-size: 22px; font-weight: 700; color: var(--kickstarter-cyan); text-transform: uppercase; margin-bottom: 4px; }
+.results-poster-header .subtitle { font-size: 13px; color: var(--ink-muted); }
+.results-poster-meta { text-align: right; font-size: 12px; color: var(--ink-muted); }
+.results-poster-meta .respondent { font-size: 16px; font-weight: 700; color: var(--ms-navy); margin-bottom: 4px; }
+.results-poster-meta .role-tag { display: inline-block; background: #E8F4FD; color: var(--ms-blue-dark); padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-top: 4px; }
+
+.results-summary { padding: 18px 40px; background: var(--paper-soft); border-bottom: 1px solid var(--rule); display: flex; gap: 14px; flex-wrap: wrap; }
+.summary-pill { display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: var(--paper); border: 1px solid var(--rule); border-radius: 16px; font-size: 13px; }
+.summary-pill .count { font-weight: 700; font-size: 16px; color: var(--ms-navy); }
+
+.results-section { padding: 22px 40px; border-bottom: 1px solid var(--rule); }
+.results-section:last-child { border-bottom: none; }
+.results-section h3 { font-size: 15px; font-weight: 700; color: var(--ms-navy); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.results-section h3 .label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 12px; border-radius: 12px; color: white; background: var(--ms-blue); }
+
+.results-section h3 .horizon-pill[data-h="3mo"] { background: var(--h-3mo); }
+.results-section h3 .horizon-pill[data-h="6mo"] { background: var(--h-6mo); }
+.results-section h3 .horizon-pill[data-h="12mo"] { background: var(--h-12mo); }
+
+.result-init-row { padding: 10px 0; border-bottom: 1px solid var(--rule); }
+.result-init-row:last-child { border-bottom: none; padding-bottom: 0; }
+.result-init-row:first-child { padding-top: 0; }
+.result-init-text { font-size: 13.5px; color: var(--ink); margin-bottom: 6px; }
+.result-init-text .name { font-weight: 600; color: var(--ms-navy); }
+.result-init-text .tool { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
+.result-raci-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.result-raci-pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 12px; font-size: 11.5px; font-weight: 600; color: white; }
+.result-raci-pill .letter { width: 16px; height: 16px; border-radius: 50%; background: rgba(255,255,255,0.3); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+.result-raci-pill[data-l="R"] { background: var(--r-color); }
+.result-raci-pill[data-l="A"] { background: var(--a-color); }
+.result-raci-pill[data-l="C"] { background: var(--c-color); }
+.result-raci-pill[data-l="I"] { background: var(--i-color); }
+
+.result-roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.result-role-pill { background: var(--paper-soft); border: 1px solid var(--rule); border-radius: 4px; padding: 8px 12px; font-size: 12.5px; }
+.result-role-pill .role-name { font-weight: 600; color: var(--ms-navy); margin-bottom: 2px; }
+.result-role-pill .role-person { color: var(--ink-muted); font-size: 11.5px; }
+
+.results-poster-footer { padding: 18px 40px; background: var(--paper-soft); border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--ink-muted); }
+.results-poster-footer .brand-mini { font-weight: 700; color: var(--kickstarter-cyan); letter-spacing: 0.04em; text-transform: uppercase; }
+
+.action-row { display: flex; gap: 10px; justify-content: center; margin-top: 28px; flex-wrap: wrap; }
+.action-btn { font-family: inherit; font-size: 13.5px; font-weight: 600; background: var(--paper); color: var(--ink); border: 1px solid var(--rule); padding: 10px 20px; border-radius: 4px; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 7px; }
+.action-btn:hover { border-color: var(--ms-blue); background: var(--hover-bg); color: var(--ms-blue-dark); }
+.action-btn.primary { background: var(--ms-blue); color: white; border-color: var(--ms-blue); }
+.action-btn.primary:hover { background: var(--ms-blue-dark); color: white; }
+.action-btn svg { width: 14px; height: 14px; }
+
+/* MODAL for adding custom initiative/role */
+.modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+.modal-backdrop.shown { display: flex; }
+.modal { background: var(--paper); border-radius: 8px; padding: 28px; max-width: 480px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+.modal h3 { font-size: 18px; color: var(--ms-navy); margin-bottom: 16px; }
+.modal label { display: block; font-size: 11px; font-weight: 700; color: var(--ms-navy); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; margin-top: 12px; }
+.modal input, .modal select, .modal textarea { width: 100%; font-family: inherit; font-size: 14px; padding: 9px 12px; border: 1px solid var(--rule); border-radius: 4px; }
+.modal textarea { resize: vertical; min-height: 60px; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+@media (max-width: 980px) {
+  .stepper-inner { flex-direction: column; }
+  .step-tab { border-right: none; border-bottom: 1px solid var(--rule); }
+  .step-tab:last-child { border-bottom: none; }
+}
+@media (max-width: 720px) {
+  .top-strip, .intro-banner, .user-bar, .stepper, .step-panel, .step-nav, .poster-footer, #results-panel { padding-left: 24px; padding-right: 24px; }
+  .user-bar-inner { grid-template-columns: 1fr; }
+  .results-poster-header { flex-direction: column; }
+  .results-poster-header, .results-summary, .results-section, .results-poster-footer { padding-left: 24px; padding-right: 24px; }
+  .intro-banner-inner { flex-direction: column; align-items: flex-start; }
+  .sticky-note { transform: none; }
+}
+@media print {
+  body { background: white; }
+  .top-strip, .intro-banner, .user-bar, .stepper, .step-panel, .step-nav, .poster-footer { display: none; }
+  #results-panel { padding: 0; margin: 0; max-width: 100%; }
+  .results-instructions, .action-row { display: none; }
+  .results-poster { box-shadow: none; border: 1px solid #ccc; }
+}
+</style>
+</head>
+<body>
+
+<header class="top-strip">
+  <div>
+    <div class="brand-logo">Kickstarter</div>
+    <div class="brand-divider"><span class="brand-tagline">Workshops</span></div>
+  </div>
+  <div class="sticky-note">
+    <strong>How this works:</strong>
+    <ol>
+      <li>Pick the <strong>initiatives</strong> that matter for your org (3–10)</li>
+      <li>Pick the <strong>roles</strong> who will own them (3–6)</li>
+      <li>Build a <strong>RACI matrix</strong> &mdash; who's responsible for each initiative</li>
+    </ol>
+  </div>
+</header>
+
+<div class="intro-banner">
+  <div class="intro-banner-inner">
+    <div>
+      <h1>Module 5 — RACI Action Plan Builder</h1>
+      <p>Three steps to a working action plan. Choose initiatives, name owners, build the RACI matrix. Output: a screenshot you can take back to your team and execute on.</p>
+    </div>
+    <div class="meta-pills">
+      <span>⏱ 45-60 min</span>
+      <span>🔒 Private</span>
+      <span>📷 Screenshot to share</span>
+    </div>
+  </div>
+</div>
+
+<div class="user-bar">
+  <div class="user-bar-inner">
+    <div class="user-field">
+      <label for="name-input">Your Name <span style="color: var(--ink-muted); font-weight: 400; text-transform: none; letter-spacing: 0;">(optional)</span></label>
+      <input type="text" id="name-input" placeholder="Your name (or leave blank)">
+    </div>
+    <div class="user-field">
+      <label for="role-select">Your Role</label>
+      <select id="role-select">
+        <option value="">— Select your role —</option>
+        <option>IT / Power Platform Administrator</option>
+        <option>Security or Compliance Professional</option>
+        <option>Solution or Enterprise Architect</option>
+        <option>Adoption or Change Management Lead</option>
+        <option>Citizen Developer / Maker</option>
+        <option>Business Analyst or Process Owner</option>
+        <option>Manager or Team Lead</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="user-field">
+      <label for="org-input">Your Organisation <span style="color: var(--ink-muted); font-weight: 400; text-transform: none; letter-spacing: 0;">(optional)</span></label>
+      <input type="text" id="org-input" placeholder="e.g., Contoso">
+    </div>
+  </div>
+</div>
+
+<!-- STEPPER -->
+<div class="stepper">
+  <div class="stepper-inner">
+    <button class="step-tab active" data-step="1">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-label">Step 1 · Initiatives</div>
+        <div class="step-title">Pick what to do</div>
+        <div class="step-meta" id="step1-meta">0 selected</div>
+      </div>
+    </button>
+    <button class="step-tab" data-step="2">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-label">Step 2 · Roles</div>
+        <div class="step-title">Pick who'll own it</div>
+        <div class="step-meta" id="step2-meta">0 selected</div>
+      </div>
+    </button>
+    <button class="step-tab" data-step="3">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-label">Step 3 · RACI</div>
+        <div class="step-title">Build the matrix</div>
+        <div class="step-meta" id="step3-meta">0 cells filled</div>
+      </div>
+    </button>
+  </div>
+</div>
+
+<!-- ===== STEP 1: INITIATIVES ===== -->
+<section class="step-panel active" id="panel-step1">
+  <div class="section-head">
+    <h3>Step 1 · Pick the initiatives that matter for your organisation</h3>
+    <p>Browse the cards below. Click to select. Aim for 3 to 10 initiatives. Once selected, set a horizon (3, 6, or 12 months). Skip cards that don't apply.</p>
+  </div>
+  <div class="howto-banner">
+    <div class="icon">i</div>
+    <div class="text"><strong>Tip:</strong> The first horizon (3 months) should be your highest-priority initiatives. Don't try to do everything at once. Most successful programs ship 3–4 initiatives in the first quarter.</div>
+  </div>
+
+  <div class="category-filter">
+    <span class="filter-label">Filter:</span>
+    <button class="cat-filter-btn active" data-cat="all">All</button>
+    <button class="cat-filter-btn" data-cat="data">Data Protection</button>
+    <button class="cat-filter-btn" data-cat="identity">Identity &amp; Access</button>
+    <button class="cat-filter-btn" data-cat="environment">Environment</button>
+    <button class="cat-filter-btn" data-cat="monitoring">Monitoring</button>
+    <button class="cat-filter-btn" data-cat="rai">RAI</button>
+    <button class="cat-filter-btn" data-cat="maker">Makers</button>
+  </div>
+
+  <div class="cards-grid" id="initiatives-grid"></div>
+  <button class="add-custom-btn" id="add-custom-init-btn">+ Add a custom initiative</button>
+</section>
+
+<!-- ===== STEP 2: ROLES ===== -->
+<section class="step-panel" id="panel-step2">
+  <div class="section-head">
+    <h3>Step 2 · Pick the roles who will own the work</h3>
+    <p>Choose 3 to 6 roles that exist in your organisation. After selecting, type the actual person or team name &mdash; abstract roles become real commitments when you write a name.</p>
+  </div>
+  <div class="howto-banner">
+    <div class="icon">i</div>
+    <div class="text"><strong>Tip from Microsoft Learn:</strong> If you cannot agree on who fills a role, that itself is the finding &mdash; it usually means the role is shared across teams in a way that creates accountability gaps. Capture it on a follow-up list.</div>
+  </div>
+  <div class="roles-grid" id="roles-grid"></div>
+  <button class="add-custom-btn" id="add-custom-role-btn">+ Add a custom role</button>
+</section>
+
+<!-- ===== STEP 3: RACI MATRIX ===== -->
+<section class="step-panel" id="panel-step3">
+  <div class="section-head">
+    <h3>Step 3 · Build the RACI matrix</h3>
+    <p>For each initiative, click the R/A/C/I button under each role to indicate their involvement. Multiple letters per cell are allowed.</p>
+  </div>
+  <div class="howto-banner">
+    <div class="icon">i</div>
+    <div class="text"><strong>Tip:</strong> Start with <strong>R</strong> (who's doing the work). Then <strong>A</strong> (who's accountable). Then <strong>C</strong> and <strong>I</strong>. Goal: <strong>exactly one A per row.</strong> Multiple A's dilute accountability.</div>
+  </div>
+
+  <div class="horizon-tabs" id="horizon-tabs">
+    <button class="horizon-tab active" data-h="all">All horizons</button>
+    <button class="horizon-tab" data-h="3mo">3 months</button>
+    <button class="horizon-tab" data-h="6mo">6 months</button>
+    <button class="horizon-tab" data-h="12mo">12 months</button>
+  </div>
+
+  <div id="raci-area"></div>
+</section>
+
+<!-- ===== STEP NAVIGATION ===== -->
+<div class="step-nav">
+  <button class="btn btn-secondary" id="prev-btn" disabled>← Back</button>
+  <button class="btn btn-primary" id="next-btn">Next →</button>
+</div>
+
+<!-- ===== SUBMIT FOOTER ===== -->
+<footer class="poster-footer">
+  <div class="poster-footer-left">
+    <div id="error-banner" class="error-banner"></div>
+    <button class="btn-results" id="show-results-btn" disabled>Show my action plan →</button>
+    <p style="font-size: 12px; color: var(--ink-muted); margin-top: 8px;" id="submit-hint">Complete all three steps to enable the button.</p>
+  </div>
+  <div class="ms-logo">
+    <div class="ms-logo-tiles"><span></span><span></span><span></span><span></span></div>
+    <span>Microsoft</span>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<!-- ===== RESULTS PANEL ===== -->
+<section id="results-panel">
+  <div class="results-instructions">
+    <strong>Your action plan is ready.</strong>
+    <p>Take a screenshot. On Windows: <kbd>Win</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd>. On Mac: <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>4</kbd>. Print or copy as text using the buttons below.</p>
+  </div>
+
+  <article class="results-poster" id="results-card">
+    <div class="results-poster-top-strip"></div>
+    <div class="results-poster-header">
+      <div>
+        <h2>Kickstarter Workshops</h2>
+        <div class="subtitle">Module 5 · RACI Action Plan</div>
+      </div>
+      <div class="results-poster-meta">
+        <div class="respondent" id="result-name">Anonymous Response</div>
+        <div id="result-org"></div>
+        <div id="result-date"></div>
+        <div class="role-tag" id="result-role">—</div>
+      </div>
+    </div>
+
+    <div class="results-summary" id="results-summary"></div>
+
+    <div class="results-section" id="results-roles-section">
+      <h3><span class="label">Roles</span> Your governance team</h3>
+      <div class="result-roles-grid" id="result-roles-list"></div>
+    </div>
+
+    <div id="result-horizons"></div>
+
+    <div class="results-poster-footer">
+      <span class="brand-mini">Govern &amp; Secure AI Agents</span>
+      <span>Microsoft Kickstarter Workshops</span>
+    </div>
+  </article>
+
+  <div class="action-row">
+    <button class="action-btn primary" id="print-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print or save as PDF
+    </button>
+    <button class="action-btn" id="copy-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <span id="copy-btn-label">Copy as text</span>
+    </button>
+    <button class="action-btn" id="edit-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Edit my plan
+    </button>
+  </div>
+</section>
+
+<script>
+(function() {
+
+  // ============= DATA =============
+  const INITIATIVES = [
+    // Data Protection
+    { id: 'i01', cat: 'data', title: 'Data Loss Prevention (DLP) policies', tool: 'Restrict where agents can send and receive sensitive data via connector classifications.' },
+    { id: 'i02', cat: 'data', title: 'Advanced Connector Policies', tool: 'Fine-grained restrictions on individual connector actions and endpoints.' },
+    { id: 'i03', cat: 'data', title: 'Information Protection / Sensitivity Labels', tool: 'Microsoft Purview labels for classification, encryption, and usage restrictions.' },
+    { id: 'i04', cat: 'data', title: 'Tenant Isolation', tool: 'Block agents from sending data outside organisational boundaries.' },
+    { id: 'i05', cat: 'data', title: 'Virtual Network Support', tool: 'Restrict agents to communicate only within Azure VNet for private resources.' },
+    // Identity & Access
+    { id: 'i06', cat: 'identity', title: 'Microsoft Entra ID (MFA, CA, SSO)', tool: 'Strong authentication and role-based controls for agent users.' },
+    { id: 'i07', cat: 'identity', title: 'Privileged Identity Management (PIM)', tool: 'Time-bound admin privilege elevation to reduce misuse risk.' },
+    { id: 'i08', cat: 'identity', title: 'Access Reviews', tool: 'Regularly validate user and agent accounts in Microsoft Entra.' },
+    { id: 'i09', cat: 'identity', title: 'IP Firewall Rules', tool: 'Restrict traffic for Copilot Studio resources by IP range.' },
+    { id: 'i10', cat: 'identity', title: 'IP Cookie Binding', tool: 'Prevent hijacked sessions by binding cookies to client IP/device.' },
+    { id: 'i11', cat: 'identity', title: 'Conditional Access', tool: 'Enforce policies based on trusted locations, IPs, and risk-based conditions.' },
+    { id: 'i12', cat: 'identity', title: 'Dataverse Environment Roles', tool: 'Assign least-privilege roles at table or field levels.' },
+    // Environment
+    { id: 'i13', cat: 'environment', title: 'Zoned Environment Strategy', tool: 'Define Green/Yellow/Red zones to prevent sprawl and align with compliance.' },
+    { id: 'i14', cat: 'environment', title: 'Environment Routing & Guardrails', tool: 'Direct makers to correct environment with quotas and naming conventions.' },
+    { id: 'i15', cat: 'environment', title: 'Managed Environments', tool: 'Set baseline policies at scale to prevent unmanaged agents.' },
+    { id: 'i16', cat: 'environment', title: 'Sharing Limits', tool: 'Cap the number of shares per agent to prevent oversharing.' },
+    { id: 'i17', cat: 'environment', title: 'Deployment Pipelines', tool: 'Standardise Dev/Test/Prod deployments with approval gates.' },
+    { id: 'i18', cat: 'environment', title: 'Managed Solutions', tool: 'Package agents into solutions for proper lifecycle management.' },
+    // Monitoring & Compliance
+    { id: 'i19', cat: 'monitoring', title: 'Security Hub & Posture Monitoring', tool: 'Review posture monthly and act on prioritised recommendations.' },
+    { id: 'i20', cat: 'monitoring', title: 'Audit Logs (Dataverse & Copilot Studio)', tool: 'Capture agent usage and data access trails for misuse investigation.' },
+    { id: 'i21', cat: 'monitoring', title: 'Microsoft Sentinel / Log Analytics', tool: 'Centralise telemetry for analysis and proactive alerts.' },
+    { id: 'i22', cat: 'monitoring', title: 'Admin Center Analytics / Copilot Studio Kit', tool: 'Monitor usage, adoption, and capacity for governance.' },
+    { id: 'i23', cat: 'monitoring', title: 'Customer Lockbox', tool: 'Require explicit customer approval for support engineer data access.' },
+    { id: 'i24', cat: 'monitoring', title: 'Anomaly Detection Alerts', tool: 'Detect and alert on unusual agent behavior.' },
+    { id: 'i25', cat: 'monitoring', title: 'Compliance Manager (GDPR / HIPAA alignment)', tool: 'Audit reviews of agent logs and policy enforcement for regulatory alignment.' },
+    // RAI
+    { id: 'i26', cat: 'rai', title: 'RAI Assessment Templates', tool: 'Map risks before go-live to ensure RAI coverage on every agent.' },
+    { id: 'i27', cat: 'rai', title: 'Bias / Fairness Testing', tool: 'Evaluate outputs for fairness; remove discriminatory responses.' },
+    { id: 'i28', cat: 'rai', title: 'Explainability Tooling', tool: 'Provide reasoning or transparency for AI outputs to end users.' },
+    { id: 'i29', cat: 'rai', title: 'Content Safety Filters (Azure AI)', tool: 'Block harmful or offensive content from being generated.' },
+    { id: 'i30', cat: 'rai', title: 'Human-in-the-Loop Checkpoints', tool: 'Require human approval before sensitive agent actions complete.' },
+    { id: 'i31', cat: 'rai', title: 'Red-Team Simulations & Prompt Hardening', tool: 'Run adversarial tests to identify vulnerabilities and prompt-injection risks.' },
+    // Makers
+    { id: 'i32', cat: 'maker', title: 'Power Well-Architected SDL', tool: 'Guide makers to identify and mitigate security gaps early in development.' },
+    { id: 'i33', cat: 'maker', title: 'Maker Training Programme', tool: 'Mandatory pre-deployment training for makers building business agents.' },
+    { id: 'i34', cat: 'maker', title: 'Agent Support & Escalation Process', tool: 'Structured support path for makers and end-users when agents fail.' },
+    { id: 'i35', cat: 'maker', title: 'Connector Approval Workflow', tool: 'Approved catalog with request workflow for new data sources.' },
+  ];
+
+  const ROLES = [
+    // Administration & Governance
+    { id: 'r01', name: 'Power Platform Administrator', cat: 'Administration & Governance', desc: 'Platform health, Data Policies, environment creation, capacity, monitoring.' },
+    { id: 'r02', name: 'Copilot Studio Administrator', cat: 'Administration & Governance', desc: 'Channel/auth config, logging, SIEM export, feature governance.' },
+    { id: 'r03', name: 'Environment Admin', cat: 'Administration & Governance', desc: 'Manages and configures environments at the unit level.' },
+    { id: 'r04', name: 'Global Administrator', cat: 'Administration & Governance', desc: 'Conditional Access, MFA, PIM, access reviews, app registrations.' },
+    { id: 'r05', name: 'Microsoft 365 Admin', cat: 'Administration & Governance', desc: 'Manages M365 services like SharePoint, Teams, Planner.' },
+    { id: 'r06', name: 'Product Owner / CoE Lead', cat: 'Administration & Governance', desc: 'Sets standards, adoption goals, risk prioritisation, platform ownership.' },
+    // AI Data & Security
+    { id: 'r07', name: 'AI Risk Analyst', cat: 'AI, Data & Security', desc: 'Evaluates AI risks and recommends mitigations.' },
+    { id: 'r08', name: 'AI Risk Manager', cat: 'AI, Data & Security', desc: 'Documents model/agent risks and manages attestations.' },
+    { id: 'r09', name: 'AI Security Engineer', cat: 'AI, Data & Security', desc: 'Threat modeling, red-teaming, prompt hardening.' },
+    { id: 'r10', name: 'Cybersecurity / InfoSec Team', cat: 'AI, Data & Security', desc: 'Designs frameworks to protect AI models and data org-wide.' },
+    { id: 'r11', name: 'Compliance Officer', cat: 'AI, Data & Security', desc: 'Controls testing, evidence, audit readiness, eDiscovery posture.' },
+    { id: 'r12', name: 'Privacy Officer', cat: 'AI, Data & Security', desc: 'DPIA/PIA, data minimisation, lawful basis checks.' },
+    { id: 'r13', name: 'Data Steward', cat: 'AI, Data & Security', desc: 'Data quality, security, governance policies, access permissions.' },
+    { id: 'r14', name: 'Ethics Officer', cat: 'AI, Data & Security', desc: 'Monitors AI ethical standards, RAI policy compliance.' },
+    // Development & Architecture
+    { id: 'r15', name: 'Copilot Studio Author / Maker', cat: 'Development & Architecture', desc: 'Builds agents to solve business problems within guardrails.' },
+    { id: 'r16', name: 'Solution Architect', cat: 'Development & Architecture', desc: 'Solution architecture; ensures platform fits broader LOB systems.' },
+    { id: 'r17', name: 'Enterprise Architect', cat: 'Development & Architecture', desc: 'Determines criteria for when to use which agent platform.' },
+    // Strategic & Executive
+    { id: 'r18', name: 'Leadership / Executives', cat: 'Strategic & Executive', desc: 'Strategic direction, alignment with business objectives, resourcing.' },
+    { id: 'r19', name: 'Business Analyst', cat: 'Strategic & Executive', desc: 'Identifies business needs and develops solutions on the platform.' },
+    { id: 'r20', name: 'Change Management', cat: 'Strategic & Executive', desc: 'Manages transition and adoption of platform.' },
+    { id: 'r21', name: 'Project Management Office', cat: 'Strategic & Executive', desc: 'Project oversight, governance, delivery standards.' },
+    // Support
+    { id: 'r22', name: 'Project / Program Manager', cat: 'Support & Enablement', desc: 'RACI, cadence, cross-team alignment, status, escalations.' },
+    { id: 'r23', name: 'IT Operations (Support)', cat: 'Support & Enablement', desc: 'First-line support for critical platform agents.' },
+    { id: 'r24', name: 'Community / Enablement Lead', cat: 'Support & Enablement', desc: 'Training, guidance, peer support for makers.' },
+    { id: 'r25', name: 'Azure Service Administrator', cat: 'Support & Enablement', desc: 'Azure configurations supporting Copilot Studio agents.' },
+  ];
+
+  // ============= STATE =============
+  const state = {
+    initiatives: {},  // id -> { selected: bool, horizon: '3mo'|'6mo'|'12mo'|null, custom?: {title, tool, cat} }
+    roles: {},        // id -> { selected: bool, person: '', custom?: {name, cat, desc} }
+    raci: {},         // 'iId|rId' -> Set of letters
+    customInitiatives: [],
+    customRoles: [],
+    currentStep: 1,
+    currentCatFilter: 'all',
+    currentHorizonFilter: 'all',
+  };
+
+  // ============= STEP NAVIGATION =============
+  const stepTabs = document.querySelectorAll('.step-tab');
+  const stepPanels = document.querySelectorAll('.step-panel');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  function goToStep(n) {
+    state.currentStep = n;
+    stepTabs.forEach(t => t.classList.toggle('active', +t.dataset.step === n));
+    stepPanels.forEach(p => p.classList.toggle('active', p.id === 'panel-step' + n));
+    prevBtn.disabled = (n === 1);
+    nextBtn.textContent = (n === 3) ? '✓ Done' : 'Next →';
+    nextBtn.disabled = (n === 3);
+    if (n === 3) renderRaciMatrix();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  stepTabs.forEach(t => t.addEventListener('click', () => goToStep(+t.dataset.step)));
+  prevBtn.addEventListener('click', () => goToStep(Math.max(1, state.currentStep - 1)));
+  nextBtn.addEventListener('click', () => goToStep(Math.min(3, state.currentStep + 1)));
+
+  // ============= STEP 1: INITIATIVES =============
+  const initiativesGrid = document.getElementById('initiatives-grid');
+
+  const CAT_LABELS = {
+    data: 'Data Protection', identity: 'Identity & Access', environment: 'Environment',
+    monitoring: 'Monitoring', rai: 'RAI', maker: 'Makers',
+  };
+
+  function getAllInitiatives() {
+    return [...INITIATIVES, ...state.customInitiatives];
+  }
+
+  function renderInitiatives() {
+    initiativesGrid.innerHTML = '';
+    const items = getAllInitiatives().filter(i => state.currentCatFilter === 'all' || i.cat === state.currentCatFilter);
+
+    items.forEach(init => {
+      const s = state.initiatives[init.id] || { selected: false, horizon: null };
+      const card = document.createElement('div');
+      card.className = 'init-card' + (s.selected ? ' selected' : '');
+      card.dataset.id = init.id;
+      card.innerHTML = `
+        <div class="check-mark"></div>
+        <div class="init-card-cat" data-cat="${init.cat}">${CAT_LABELS[init.cat]}</div>
+        <div class="init-card-title">${escapeHtml(init.title)}</div>
+        <div class="init-card-tool">${escapeHtml(init.tool)}</div>
+        <div class="horizon-bar">
+          <button class="horizon-btn ${s.horizon === '3mo' ? 'active' : ''}" data-h="3mo">3 mo</button>
+          <button class="horizon-btn ${s.horizon === '6mo' ? 'active' : ''}" data-h="6mo">6 mo</button>
+          <button class="horizon-btn ${s.horizon === '12mo' ? 'active' : ''}" data-h="12mo">12 mo</button>
+        </div>
+      `;
+
+      // Click on card body toggles selection
+      card.addEventListener('click', (e) => {
+        if (e.target.classList.contains('horizon-btn')) return;
+        toggleInitiative(init.id);
+      });
+
+      // Horizon buttons
+      card.querySelectorAll('.horizon-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const h = btn.dataset.h;
+          if (!state.initiatives[init.id]) state.initiatives[init.id] = { selected: true, horizon: null };
+          state.initiatives[init.id].horizon = state.initiatives[init.id].horizon === h ? null : h;
+          renderInitiatives();
+          updateStepMeta();
+        });
+      });
+
+      initiativesGrid.appendChild(card);
+    });
+  }
+
+  function toggleInitiative(id) {
+    if (!state.initiatives[id]) {
+      state.initiatives[id] = { selected: true, horizon: null };
+    } else {
+      state.initiatives[id].selected = !state.initiatives[id].selected;
+      if (!state.initiatives[id].selected) state.initiatives[id].horizon = null;
+    }
+    renderInitiatives();
+    updateStepMeta();
+  }
+
+  document.querySelectorAll('.cat-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.currentCatFilter = btn.dataset.cat;
+      document.querySelectorAll('.cat-filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+      renderInitiatives();
+    });
+  });
+
+  // Add custom initiative
+  document.getElementById('add-custom-init-btn').addEventListener('click', () => {
+    showCustomInitModal();
+  });
+
+  function showCustomInitModal() {
+    const modal = document.getElementById('modal-content');
+    modal.innerHTML = `
+      <h3>Add a custom initiative</h3>
+      <label>Initiative title</label>
+      <input type="text" id="custom-init-title" placeholder="e.g., Quarterly governance review">
+      <label>Tool / process</label>
+      <textarea id="custom-init-tool" placeholder="What tool or process supports this initiative?"></textarea>
+      <label>Category</label>
+      <select id="custom-init-cat">
+        <option value="data">Data Protection</option>
+        <option value="identity">Identity &amp; Access</option>
+        <option value="environment">Environment</option>
+        <option value="monitoring">Monitoring</option>
+        <option value="rai">RAI</option>
+        <option value="maker">Makers</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="modal-cancel">Cancel</button>
+        <button class="btn btn-primary" id="modal-save">Add</button>
+      </div>
+    `;
+    document.getElementById('modal-backdrop').classList.add('shown');
+    document.getElementById('modal-cancel').addEventListener('click', closeModal);
+    document.getElementById('modal-save').addEventListener('click', () => {
+      const title = document.getElementById('custom-init-title').value.trim();
+      const tool = document.getElementById('custom-init-tool').value.trim();
+      const cat = document.getElementById('custom-init-cat').value;
+      if (!title) { alert('Please enter a title.'); return; }
+      const id = 'custom-i-' + Date.now();
+      state.customInitiatives.push({ id, cat, title, tool: tool || '(no tool/process specified)' });
+      state.initiatives[id] = { selected: true, horizon: null };
+      closeModal();
+      renderInitiatives();
+      updateStepMeta();
+    });
+  }
+
+  function closeModal() {
+    document.getElementById('modal-backdrop').classList.remove('shown');
+  }
+  document.getElementById('modal-backdrop').addEventListener('click', (e) => {
+    if (e.target.id === 'modal-backdrop') closeModal();
+  });
+
+  // ============= STEP 2: ROLES =============
+  const rolesGrid = document.getElementById('roles-grid');
+
+  function getAllRoles() {
+    return [...ROLES, ...state.customRoles];
+  }
+
+  function renderRoles() {
+    rolesGrid.innerHTML = '';
+    getAllRoles().forEach(role => {
+      const s = state.roles[role.id] || { selected: false, person: '' };
+      const card = document.createElement('div');
+      card.className = 'role-card' + (s.selected ? ' selected' : '');
+      card.dataset.id = role.id;
+      card.innerHTML = `
+        <div class="check-mark"></div>
+        <div class="role-card-name">${escapeHtml(role.name)}</div>
+        <div class="role-card-cat">${escapeHtml(role.cat)}</div>
+        <div class="role-card-desc">${escapeHtml(role.desc)}</div>
+        <div class="name-input-wrap">
+          <label>Real person or team in your org</label>
+          <input type="text" class="person-input" placeholder="e.g., Jane Doe, IT Sec team..." value="${escapeHtml(s.person || '')}">
+        </div>
+      `;
+
+      card.addEventListener('click', (e) => {
+        if (e.target.classList.contains('person-input')) return;
+        toggleRole(role.id);
+      });
+
+      const personInput = card.querySelector('.person-input');
+      personInput.addEventListener('click', e => e.stopPropagation());
+      personInput.addEventListener('input', () => {
+        if (!state.roles[role.id]) state.roles[role.id] = { selected: true, person: '' };
+        state.roles[role.id].person = personInput.value;
+      });
+
+      rolesGrid.appendChild(card);
+    });
+  }
+
+  function toggleRole(id) {
+    if (!state.roles[id]) {
+      state.roles[id] = { selected: true, person: '' };
+    } else {
+      state.roles[id].selected = !state.roles[id].selected;
+    }
+    renderRoles();
+    updateStepMeta();
+  }
+
+  document.getElementById('add-custom-role-btn').addEventListener('click', () => {
+    const modal = document.getElementById('modal-content');
+    modal.innerHTML = `
+      <h3>Add a custom role</h3>
+      <label>Role name</label>
+      <input type="text" id="custom-role-name" placeholder="e.g., AI Champion">
+      <label>Category</label>
+      <input type="text" id="custom-role-cat" placeholder="e.g., AI, Data &amp; Security">
+      <label>Description</label>
+      <textarea id="custom-role-desc" placeholder="What does this role do?"></textarea>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="modal-cancel">Cancel</button>
+        <button class="btn btn-primary" id="modal-save">Add</button>
+      </div>
+    `;
+    document.getElementById('modal-backdrop').classList.add('shown');
+    document.getElementById('modal-cancel').addEventListener('click', closeModal);
+    document.getElementById('modal-save').addEventListener('click', () => {
+      const name = document.getElementById('custom-role-name').value.trim();
+      const cat = document.getElementById('custom-role-cat').value.trim() || 'Custom';
+      const desc = document.getElementById('custom-role-desc').value.trim() || '(no description)';
+      if (!name) { alert('Please enter a role name.'); return; }
+      const id = 'custom-r-' + Date.now();
+      state.customRoles.push({ id, name, cat, desc });
+      state.roles[id] = { selected: true, person: '' };
+      closeModal();
+      renderRoles();
+      updateStepMeta();
+    });
+  });
+
+  // ============= STEP 3: RACI MATRIX =============
+  const raciArea = document.getElementById('raci-area');
+
+  document.querySelectorAll('.horizon-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      state.currentHorizonFilter = tab.dataset.h;
+      document.querySelectorAll('.horizon-tab').forEach(t => t.classList.toggle('active', t === tab));
+      renderRaciMatrix();
+    });
+  });
+
+  function getSelectedInitiatives() {
+    return getAllInitiatives().filter(i => state.initiatives[i.id]?.selected);
+  }
+  function getSelectedRoles() {
+    return getAllRoles().filter(r => state.roles[r.id]?.selected);
+  }
+
+  function renderRaciMatrix() {
+    const inits = getSelectedInitiatives().filter(i => 
+      state.currentHorizonFilter === 'all' || state.initiatives[i.id]?.horizon === state.currentHorizonFilter
+    );
+    const roles = getSelectedRoles();
+
+    if (inits.length === 0 || roles.length === 0) {
+      raciArea.innerHTML = `<div class="raci-empty">${
+        inits.length === 0 ? '⚠ No initiatives match the current filter. Pick at least one initiative in Step 1, or change horizon filter above.' : '⚠ No roles selected. Go back to Step 2 and pick at least one role.'
+      }</div>`;
+      return;
+    }
+
+    let html = '<div class="raci-matrix-wrapper"><table class="raci-matrix"><thead><tr>';
+    html += '<th class="row-header">Initiative</th>';
+    roles.forEach(r => {
+      const personLine = state.roles[r.id]?.person ? `<div class="role-header-person">${escapeHtml(state.roles[r.id].person)}</div>` : '';
+      html += `<th><div class="role-header-name">${escapeHtml(r.name)}</div>${personLine}</th>`;
+    });
+    html += '</tr></thead><tbody>';
+
+    inits.forEach(init => {
+      html += '<tr>';
+      html += `<td class="row-header"><div class="init-row-text">${escapeHtml(init.title)}</div><div class="init-row-tool">${escapeHtml(init.tool)}</div></td>`;
+      roles.forEach(role => {
+        const key = init.id + '|' + role.id;
+        const letters = state.raci[key] || new Set();
+        html += '<td class="cell"><div class="raci-cell-buttons">';
+        ['R','A','C','I'].forEach(L => {
+          const active = letters.has(L) ? 'active' : '';
+          html += `<button class="raci-letter ${active}" data-key="${key}" data-l="${L}">${L}</button>`;
+        });
+        html += '</div></td>';
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody></table>';
+    html += `<div class="raci-legend">
+      <div class="raci-legend-item"><span class="swatch" data-l="R">R</span><strong>Responsible</strong> &mdash; does the work</div>
+      <div class="raci-legend-item"><span class="swatch" data-l="A">A</span><strong>Accountable</strong> &mdash; owns the outcome (only one A per row)</div>
+      <div class="raci-legend-item"><span class="swatch" data-l="C">C</span><strong>Consulted</strong> &mdash; gives input</div>
+      <div class="raci-legend-item"><span class="swatch" data-l="I">I</span><strong>Informed</strong> &mdash; kept in the loop</div>
+    </div>`;
+    html += '</div>';
+    raciArea.innerHTML = html;
+
+    raciArea.querySelectorAll('.raci-letter').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.key;
+        const L = btn.dataset.l;
+        if (!state.raci[key]) state.raci[key] = new Set();
+        if (state.raci[key].has(L)) {
+          state.raci[key].delete(L);
+          btn.classList.remove('active');
+        } else {
+          state.raci[key].add(L);
+          btn.classList.add('active');
+        }
+        updateStepMeta();
+      });
+    });
+  }
+
+  // ============= META + SUBMIT =============
+  function updateStepMeta() {
+    const initCount = Object.values(state.initiatives).filter(s => s.selected).length;
+    const roleCount = Object.values(state.roles).filter(s => s.selected).length;
+    const raciCount = Object.values(state.raci).reduce((acc, s) => acc + s.size, 0);
+
+    document.getElementById('step1-meta').textContent = `${initCount} selected`;
+    document.getElementById('step2-meta').textContent = `${roleCount} selected`;
+    document.getElementById('step3-meta').textContent = `${raciCount} cells filled`;
+
+    document.querySelector('.step-tab[data-step="1"]').classList.toggle('completed', initCount >= 3);
+    document.querySelector('.step-tab[data-step="2"]').classList.toggle('completed', roleCount >= 3);
+    document.querySelector('.step-tab[data-step="3"]').classList.toggle('completed', raciCount >= 3);
+
+    const submitBtn = document.getElementById('show-results-btn');
+    const submitHint = document.getElementById('submit-hint');
+    const ready = initCount >= 3 && roleCount >= 3 && raciCount >= 3;
+    submitBtn.disabled = !ready;
+    if (ready) {
+      submitHint.textContent = `✓ Ready: ${initCount} initiatives, ${roleCount} roles, ${raciCount} RACI assignments.`;
+      submitHint.style.color = 'var(--success-green)';
+      submitHint.style.fontWeight = '600';
+    } else {
+      const missing = [];
+      if (initCount < 3) missing.push(`${3 - initCount} more initiative${initCount===2?'':'s'}`);
+      if (roleCount < 3) missing.push(`${3 - roleCount} more role${roleCount===2?'':'s'}`);
+      if (raciCount < 3) missing.push(`${3 - raciCount} more RACI assignment${raciCount===2?'':'s'}`);
+      submitHint.textContent = 'Need: ' + missing.join(', ') + '.';
+      submitHint.style.color = 'var(--ink-muted)';
+      submitHint.style.fontWeight = '400';
+    }
+  }
+
+  // ============= RESULTS =============
+  const submitBtn = document.getElementById('show-results-btn');
+  const errBanner = document.getElementById('error-banner');
+  const resultsPanel = document.getElementById('results-panel');
+
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  }
+
+  submitBtn.addEventListener('click', () => {
+    errBanner.classList.remove('shown');
+    const role = document.getElementById('role-select').value;
+    if (!role) { 
+      errBanner.textContent = 'Please pick your role at the top of the page.';
+      errBanner.classList.add('shown');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return; 
+    }
+
+    const name = document.getElementById('name-input').value.trim();
+    const org = document.getElementById('org-input').value.trim();
+    document.getElementById('result-name').textContent = name || 'Anonymous Response';
+    document.getElementById('result-org').textContent = org || '';
+    document.getElementById('result-date').textContent = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('result-role').textContent = role;
+
+    const inits = getSelectedInitiatives();
+    const roles = getSelectedRoles();
+
+    // Summary
+    const counts = { '3mo': 0, '6mo': 0, '12mo': 0, 'noh': 0 };
+    inits.forEach(i => {
+      const h = state.initiatives[i.id]?.horizon;
+      if (h) counts[h]++;
+      else counts.noh++;
+    });
+    const summary = document.getElementById('results-summary');
+    summary.innerHTML = `
+      <div class="summary-pill"><span class="count">${inits.length}</span> Initiatives</div>
+      <div class="summary-pill"><span class="count">${roles.length}</span> Roles</div>
+      <div class="summary-pill"><span class="count">${counts['3mo']}</span> in first 3 months</div>
+      <div class="summary-pill"><span class="count">${counts['6mo']}</span> in 6 months</div>
+      <div class="summary-pill"><span class="count">${counts['12mo']}</span> in 12 months</div>
+    `;
+
+    // Roles list
+    const rolesList = document.getElementById('result-roles-list');
+    rolesList.innerHTML = '';
+    roles.forEach(r => {
+      const person = state.roles[r.id]?.person?.trim();
+      const pill = document.createElement('div');
+      pill.className = 'result-role-pill';
+      pill.innerHTML = `
+        <div class="role-name">${escapeHtml(r.name)}</div>
+        <div class="role-person">${person ? '👤 ' + escapeHtml(person) : '<em>No name assigned</em>'}</div>
+      `;
+      rolesList.appendChild(pill);
+    });
+
+    // Initiatives grouped by horizon
+    const horizonsContainer = document.getElementById('result-horizons');
+    horizonsContainer.innerHTML = '';
+    const HORIZON_ORDER = [
+      ['3mo', '3 months'],
+      ['6mo', '6 months'],
+      ['12mo', '12 months'],
+      ['noh', 'No horizon set'],
+    ];
+    HORIZON_ORDER.forEach(([h, label]) => {
+      const items = inits.filter(i => (state.initiatives[i.id]?.horizon || 'noh') === h);
+      if (items.length === 0) return;
+
+      const section = document.createElement('div');
+      section.className = 'results-section';
+      let initRowsHtml = items.map(init => {
+        const raciPills = roles.map(r => {
+          const key = init.id + '|' + r.id;
+          const letters = state.raci[key];
+          if (!letters || letters.size === 0) return '';
+          const sortedLetters = ['R','A','C','I'].filter(L => letters.has(L));
+          return sortedLetters.map(L => `
+            <span class="result-raci-pill" data-l="${L}">
+              <span class="letter">${L}</span>
+              ${escapeHtml(r.name)}${state.roles[r.id]?.person ? ' (' + escapeHtml(state.roles[r.id].person) + ')' : ''}
+            </span>
+          `).join('');
+        }).join('');
+
+        return `
+          <div class="result-init-row">
+            <div class="result-init-text">
+              <span class="name">${escapeHtml(init.title)}</span>
+              <div class="tool">${escapeHtml(init.tool)}</div>
+            </div>
+            ${raciPills ? '<div class="result-raci-row">' + raciPills + '</div>' : '<div style="font-size: 12px; color: var(--ink-muted); font-style: italic; margin-top: 4px;">No RACI assignments yet</div>'}
+          </div>
+        `;
+      }).join('');
+
+      section.innerHTML = `
+        <h3><span class="label horizon-pill" data-h="${h !== 'noh' ? h : ''}">${label}</span> ${items.length} initiative${items.length === 1 ? '' : 's'}</h3>
+        ${initRowsHtml}
+      `;
+      horizonsContainer.appendChild(section);
+    });
+
+    resultsPanel.classList.add('shown');
+    setTimeout(() => resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+  });
+
+  document.getElementById('print-btn').addEventListener('click', () => window.print());
+
+  document.getElementById('copy-btn').addEventListener('click', () => {
+    const lines = [
+      'KICKSTARTER WORKSHOPS — RACI ACTION PLAN',
+      'Govern & Secure AI Agents · Module 5',
+      '',
+      document.getElementById('result-name').textContent,
+      document.getElementById('result-org').textContent && 'Organisation: ' + document.getElementById('result-org').textContent,
+      document.getElementById('result-date').textContent,
+      'Role: ' + document.getElementById('result-role').textContent,
+      '',
+      '═══ ROLES ═══',
+      '',
+    ].filter(Boolean);
+
+    getSelectedRoles().forEach(r => {
+      const person = state.roles[r.id]?.person?.trim();
+      lines.push(`• ${r.name}${person ? ' — ' + person : ''}`);
+    });
+    lines.push('');
+
+    const HORIZON_ORDER = [['3mo', '3 MONTHS'], ['6mo', '6 MONTHS'], ['12mo', '12 MONTHS'], ['noh', 'NO HORIZON SET']];
+    const inits = getSelectedInitiatives();
+    const roles = getSelectedRoles();
+
+    HORIZON_ORDER.forEach(([h, label]) => {
+      const items = inits.filter(i => (state.initiatives[i.id]?.horizon || 'noh') === h);
+      if (items.length === 0) return;
+      lines.push(`═══ ${label} ═══`);
+      lines.push('');
+      items.forEach((init, idx) => {
+        lines.push(`${idx + 1}. ${init.title}`);
+        lines.push(`   Tool: ${init.tool}`);
+        const raciAssignments = [];
+        roles.forEach(r => {
+          const letters = state.raci[init.id + '|' + r.id];
+          if (letters && letters.size > 0) {
+            const sortedLetters = ['R','A','C','I'].filter(L => letters.has(L));
+            const person = state.roles[r.id]?.person?.trim();
+            raciAssignments.push(`   ${sortedLetters.join('/')} — ${r.name}${person ? ' (' + person + ')' : ''}`);
+          }
+        });
+        if (raciAssignments.length) {
+          lines.push(...raciAssignments);
+        } else {
+          lines.push('   (no RACI assignments)');
+        }
+        lines.push('');
+      });
+    });
+
+    navigator.clipboard.writeText(lines.join('\n')).then(() => {
+      const label = document.getElementById('copy-btn-label');
+      const orig = label.textContent;
+      label.textContent = 'Copied ✓';
+      setTimeout(() => label.textContent = orig, 2000);
+    }).catch(() => alert('Could not copy. Take a screenshot instead.'));
+  });
+
+  document.getElementById('edit-btn').addEventListener('click', () => {
+    resultsPanel.classList.remove('shown');
+    goToStep(1);
+  });
+
+  // INITIAL RENDER
+  renderInitiatives();
+  renderRoles();
+  updateStepMeta();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kickstarter Workshops — Security Recommendations Triage</title>
+<style>
+:root {
+  --ms-blue: #0078D4;
+  --ms-blue-bright: #00BCF2;
+  --ms-blue-dark: #005A9E;
+  --ms-navy: #243A5E;
+  --ms-navy-soft: #2E4374;
+  --kickstarter-cyan: #18B8E8;
+  --paper: #FFFFFF;
+  --paper-soft: #FAFBFC;
+  --rule: #E1E5EA;
+  --ink: #242424;
+  --ink-soft: #424242;
+  --ink-muted: #707783;
+  --sticky-yellow: #FFF4A3;
+  --sticky-yellow-fold: #F5E68A;
+  --hover-bg: #F4F8FB;
+  --error-red: #D13438;
+  --error-bg: #FDE7E9;
+  --warn-amber: #B08D3A;
+  --warn-amber-bg: #FFF8E1;
+  --priority-high: #C0392B;
+  --priority-med: #DA7B11;
+  --priority-low: #6FBA50;
+  --priority-skip: #707783;
+  --success-green: #107C41;
+  --success-bg: #DFF0E5;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--paper-soft); color: var(--ink); line-height: 1.5; font-size: 15px; -webkit-font-smoothing: antialiased; }
+
+.top-strip { background: var(--paper); border-bottom: 1px solid var(--rule); padding: 28px 48px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 24px; }
+.brand { display: flex; flex-direction: column; gap: 4px; }
+.brand-logo { font-weight: 700; font-size: 32px; letter-spacing: -0.02em; color: var(--kickstarter-cyan); line-height: 1; text-transform: uppercase; }
+.brand-divider { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+.brand-divider::before, .brand-divider::after { content: ''; height: 2px; flex: 1; background: var(--kickstarter-cyan); max-width: 40px; }
+.brand-tagline { font-size: 14px; color: var(--kickstarter-cyan); font-weight: 400; letter-spacing: 0.02em; }
+
+.sticky-note { background: var(--sticky-yellow); padding: 16px 20px; max-width: 380px; position: relative; font-size: 13px; line-height: 1.5; box-shadow: 2px 3px 8px rgba(0,0,0,0.08), 1px 1px 0 rgba(0,0,0,0.04); transform: rotate(-1deg); }
+.sticky-note::before { content: ''; position: absolute; bottom: 0; right: 0; width: 22px; height: 22px; background: linear-gradient(135deg, transparent 50%, var(--sticky-yellow-fold) 50%); box-shadow: -1px -1px 2px rgba(0,0,0,0.06); }
+.sticky-note > strong { display: block; font-weight: 700; margin-bottom: 6px; font-size: 14px; }
+.sticky-note ul { list-style: none; display: grid; gap: 4px; }
+.sticky-note ul li { padding-left: 14px; position: relative; }
+.sticky-note ul li::before { content: '•'; position: absolute; left: 4px; font-weight: 700; }
+.sticky-note ul li strong { font-weight: 700; }
+
+.intro-banner { max-width: 1200px; margin: 0 auto; padding: 22px 48px 0; }
+.intro-banner-inner { background: linear-gradient(135deg, var(--ms-navy) 0%, var(--ms-navy-soft) 100%); color: white; padding: 22px 28px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+.intro-banner h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.01em; }
+.intro-banner p { font-size: 13.5px; opacity: 0.85; line-height: 1.45; max-width: 700px; }
+.intro-banner .meta-pills { display: flex; gap: 8px; flex-shrink: 0; }
+.intro-banner .meta-pills span { background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 14px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+
+.user-bar { max-width: 1200px; margin: 28px auto 0; padding: 0 48px; }
+.user-bar-inner { background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 20px 24px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px; align-items: end; }
+.user-field label { display: block; font-size: 11px; font-weight: 700; color: var(--ms-navy); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+.user-field input, .user-field select { width: 100%; font-family: inherit; font-size: 14px; padding: 9px 12px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); border-radius: 4px; }
+.user-field input:focus, .user-field select:focus { outline: none; border-color: var(--ms-blue); box-shadow: 0 0 0 3px rgba(0,120,212,0.12); }
+
+.activity-header { max-width: 1200px; margin: 36px auto 0; padding: 0 48px; }
+.activity-header-inner { display: flex; align-items: center; gap: 16px; padding: 18px 24px; background: linear-gradient(135deg, var(--ms-blue) 0%, var(--ms-blue-bright) 100%); color: white; border-radius: 8px; }
+.activity-header-num { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; flex-shrink: 0; }
+.activity-header-content h2 { font-size: 20px; font-weight: 700; margin-bottom: 2px; color: white; }
+.activity-header-content p { font-size: 13px; opacity: 0.92; }
+
+.howto-banner { max-width: 1200px; margin: 16px auto 0; padding: 0 48px; }
+.howto-banner-inner { padding: 14px 18px; background: #E8F4FD; border-left: 4px solid var(--ms-blue); border-radius: 0 4px 4px 0; display: flex; gap: 12px; align-items: flex-start; }
+.howto-banner-inner .icon { width: 28px; height: 28px; border-radius: 50%; background: var(--ms-blue); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+.howto-banner-inner .text { font-size: 13px; color: var(--ms-navy); line-height: 1.5; }
+
+.recommendations { max-width: 1200px; margin: 24px auto 0; padding: 0 48px; }
+.rec-card { background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 18px 22px; margin-bottom: 14px; transition: border-color 0.18s, background 0.18s; }
+.rec-card.has-priority { border-left-width: 5px; border-left-style: solid; }
+.rec-card.has-priority[data-priority="high"] { border-left-color: var(--priority-high); }
+.rec-card.has-priority[data-priority="med"] { border-left-color: var(--priority-med); }
+.rec-card.has-priority[data-priority="low"] { border-left-color: var(--priority-low); }
+.rec-card.has-priority[data-priority="skip"] { border-left-color: var(--priority-skip); }
+
+.rec-head { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 12px; }
+.rec-num { width: 32px; height: 32px; border-radius: 50%; background: var(--ms-blue); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+.rec-title-wrap { flex: 1; }
+.rec-title { font-size: 15px; font-weight: 700; color: var(--ms-navy); line-height: 1.3; margin-bottom: 4px; }
+.rec-prompt { font-size: 13px; color: var(--ink-muted); font-style: italic; line-height: 1.45; }
+.rec-prompt::before { content: '💡 '; }
+
+.rec-controls { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; padding-top: 14px; border-top: 1px solid var(--rule); }
+.rec-control-block { }
+.rec-control-block label { display: block; font-size: 11px; font-weight: 700; color: var(--ms-navy); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+
+.priority-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
+.priority-btn { padding: 6px 12px; border-radius: 16px; border: 2px solid transparent; background: var(--paper-soft); color: var(--ink-muted); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; user-select: none; display: inline-flex; align-items: center; gap: 6px; }
+.priority-btn:hover { background: white; transform: translateY(-1px); }
+.priority-btn .dot { width: 8px; height: 8px; border-radius: 50%; }
+.priority-btn[data-p="high"] .dot { background: var(--priority-high); }
+.priority-btn[data-p="med"] .dot { background: var(--priority-med); }
+.priority-btn[data-p="low"] .dot { background: var(--priority-low); }
+.priority-btn[data-p="skip"] .dot { background: var(--priority-skip); }
+.priority-btn.active[data-p="high"] { background: var(--priority-high); border-color: var(--priority-high); color: white; }
+.priority-btn.active[data-p="med"] { background: var(--priority-med); border-color: var(--priority-med); color: white; }
+.priority-btn.active[data-p="low"] { background: var(--priority-low); border-color: var(--priority-low); color: white; }
+.priority-btn.active[data-p="skip"] { background: var(--priority-skip); border-color: var(--priority-skip); color: white; }
+.priority-btn.active .dot { background: white !important; }
+
+.owner-input { width: 100%; font-family: inherit; font-size: 13px; padding: 7px 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); border-radius: 4px; }
+.owner-input:focus { outline: none; border-color: var(--ms-blue); box-shadow: 0 0 0 3px rgba(0,120,212,0.12); }
+
+.poster-footer { max-width: 1200px; margin: 32px auto 0; padding: 32px 48px 56px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+.poster-footer-left { flex: 1; }
+.error-banner { padding: 10px 16px; background: var(--error-bg); border-left: 3px solid var(--error-red); color: var(--error-red); font-size: 13px; border-radius: 0 4px 4px 0; margin-bottom: 14px; display: none; }
+.error-banner.shown { display: block; }
+.btn-primary { font-family: inherit; font-size: 15px; font-weight: 600; background: var(--ms-blue); color: white; border: none; padding: 12px 32px; border-radius: 4px; cursor: pointer; transition: background 0.15s; }
+.btn-primary:hover { background: var(--ms-blue-dark); }
+.btn-primary:disabled { background: #BDBDBD; cursor: not-allowed; }
+
+.ms-logo { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 600; }
+.ms-logo-tiles { display: grid; grid-template-columns: 10px 10px; grid-template-rows: 10px 10px; gap: 1px; }
+.ms-logo-tiles span:nth-child(1) { background: #F25022; }
+.ms-logo-tiles span:nth-child(2) { background: #7FBA00; }
+.ms-logo-tiles span:nth-child(3) { background: #00A4EF; }
+.ms-logo-tiles span:nth-child(4) { background: #FFB900; }
+
+#results-panel { display: none; max-width: 1200px; margin: 0 auto 60px; padding: 0 48px; }
+#results-panel.shown { display: block; animation: fadeUp 0.45s cubic-bezier(0.2, 0.8, 0.4, 1); }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.results-instructions { margin-bottom: 24px; padding: 18px 24px; background: var(--success-bg); border-left: 4px solid var(--priority-low); border-radius: 0 4px 4px 0; }
+.results-instructions strong { font-weight: 700; color: var(--success-green); display: block; margin-bottom: 4px; font-size: 15px; }
+.results-instructions p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.55; }
+.results-instructions kbd { background: var(--paper); border: 1px solid var(--rule); border-radius: 3px; padding: 1px 6px; font-family: monospace; font-size: 12px; font-weight: 600; color: var(--ink); margin: 0 2px; }
+
+.results-poster { background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 4px 16px -4px rgba(36,58,94,0.1); overflow: hidden; }
+.results-poster-top-strip { height: 5px; background: linear-gradient(90deg, var(--priority-high) 0%, var(--priority-med) 33%, var(--priority-low) 66%, var(--priority-skip) 100%); }
+.results-poster-header { padding: 28px 40px 22px; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
+.results-poster-header h2 { font-size: 22px; font-weight: 700; color: var(--kickstarter-cyan); letter-spacing: -0.01em; text-transform: uppercase; margin-bottom: 4px; }
+.results-poster-header .subtitle { font-size: 13px; color: var(--ink-muted); }
+.results-poster-meta { text-align: right; font-size: 12px; color: var(--ink-muted); }
+.results-poster-meta .respondent { font-size: 16px; font-weight: 700; color: var(--ms-navy); margin-bottom: 4px; }
+.results-poster-meta .role-tag { display: inline-block; background: #E8F4FD; color: var(--ms-blue-dark); padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-top: 4px; }
+
+.results-summary { padding: 18px 40px; background: var(--paper-soft); border-bottom: 1px solid var(--rule); display: flex; gap: 14px; flex-wrap: wrap; }
+.summary-pill { display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: var(--paper); border: 1px solid var(--rule); border-radius: 16px; font-size: 13px; }
+.summary-pill .count { font-weight: 700; font-size: 16px; }
+.summary-pill[data-p="high"] { color: var(--priority-high); border-color: var(--priority-high); }
+.summary-pill[data-p="med"] { color: var(--priority-med); border-color: var(--priority-med); }
+.summary-pill[data-p="low"] { color: var(--priority-low); border-color: var(--priority-low); }
+.summary-pill[data-p="skip"] { color: var(--priority-skip); border-color: var(--priority-skip); }
+
+.result-section { padding: 22px 40px; border-bottom: 1px solid var(--rule); }
+.result-section:last-of-type { border-bottom: none; }
+.result-section-banner { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.result-section-banner .label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 12px; border-radius: 12px; color: white; }
+.result-section-banner[data-p="high"] .label { background: var(--priority-high); }
+.result-section-banner[data-p="med"] .label { background: var(--priority-med); }
+.result-section-banner[data-p="low"] .label { background: var(--priority-low); }
+.result-section-banner[data-p="skip"] .label { background: var(--priority-skip); }
+.result-section-banner .count-text { font-size: 13px; color: var(--ink-muted); }
+
+.result-rec-row { padding: 12px 0; border-bottom: 1px solid var(--rule); display: flex; gap: 14px; align-items: flex-start; }
+.result-rec-row:last-child { border-bottom: none; padding-bottom: 0; }
+.result-rec-row:first-child { padding-top: 0; }
+.result-rec-num { width: 24px; height: 24px; border-radius: 50%; background: var(--ms-blue); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+.result-rec-text { flex: 1; }
+.result-rec-text .name { font-size: 14px; font-weight: 600; color: var(--ms-navy); line-height: 1.4; margin-bottom: 4px; }
+.result-rec-text .owner { font-size: 12.5px; color: var(--ink-muted); }
+.result-rec-text .owner.unset { font-style: italic; color: #999; }
+
+.results-poster-footer { padding: 18px 40px; background: var(--paper-soft); border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--ink-muted); }
+.results-poster-footer .brand-mini { font-weight: 700; color: var(--kickstarter-cyan); letter-spacing: 0.04em; text-transform: uppercase; }
+
+.action-row { display: flex; gap: 10px; justify-content: center; margin-top: 28px; flex-wrap: wrap; }
+.action-btn { font-family: inherit; font-size: 13.5px; font-weight: 600; background: var(--paper); color: var(--ink); border: 1px solid var(--rule); padding: 10px 20px; border-radius: 4px; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 7px; }
+.action-btn:hover { border-color: var(--ms-blue); background: var(--hover-bg); color: var(--ms-blue-dark); }
+.action-btn.primary { background: var(--ms-blue); color: white; border-color: var(--ms-blue); }
+.action-btn.primary:hover { background: var(--ms-blue-dark); color: white; }
+.action-btn svg { width: 14px; height: 14px; }
+
+@media (max-width: 720px) {
+  .top-strip, .intro-banner, .user-bar, .activity-header, .howto-banner, .recommendations, .poster-footer, #results-panel { padding-left: 24px; padding-right: 24px; }
+  .user-bar-inner { grid-template-columns: 1fr; gap: 16px; }
+  .rec-controls { grid-template-columns: 1fr; }
+  .results-poster-header { flex-direction: column; }
+  .results-poster-header, .results-summary, .result-section, .results-poster-footer { padding-left: 24px; padding-right: 24px; }
+  .intro-banner-inner { flex-direction: column; align-items: flex-start; }
+  .activity-header-inner { flex-direction: column; align-items: flex-start; }
+  .sticky-note { transform: none; }
+}
+@media print {
+  body { background: white; }
+  .top-strip, .intro-banner, .user-bar, .activity-header, .howto-banner, .recommendations, .poster-footer { display: none; }
+  #results-panel { padding: 0; margin: 0; max-width: 100%; }
+  .results-instructions, .action-row { display: none; }
+  .results-poster { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<header class="top-strip">
+  <div class="brand">
+    <div class="brand-logo">Kickstarter</div>
+    <div class="brand-divider"><span class="brand-tagline">Workshops</span></div>
+  </div>
+  <div class="sticky-note">
+    <strong>Tips:</strong>
+    <ul>
+      <li>For each recommendation, pick a <strong>priority</strong> and a <strong>likely owner</strong></li>
+      <li>It's OK to mark some as <strong>skip</strong> &mdash; not every recommendation applies to every org</li>
+      <li>Owner is the role / team / person who would do this back at your office</li>
+    </ul>
+  </div>
+</header>
+
+<div class="intro-banner">
+  <div class="intro-banner-inner">
+    <div>
+      <h1>Module 4 — Security Recommendations Triage</h1>
+      <p>Eight Security Hub recommendations from the Power Platform Admin Center. For each one, decide priority and likely owner in your organisation. Output: an action list you can take to your security team.</p>
+    </div>
+    <div class="meta-pills">
+      <span>⏱ 10 min</span>
+      <span>🔒 Private</span>
+      <span>📷 Screenshot to share</span>
+    </div>
+  </div>
+</div>
+
+<div class="user-bar">
+  <div class="user-bar-inner">
+    <div class="user-field">
+      <label for="name-input">Your Name <span style="color: var(--ink-muted); font-weight: 400; text-transform: none; letter-spacing: 0;">(optional)</span></label>
+      <input type="text" id="name-input" placeholder="Your name (or leave blank)">
+    </div>
+    <div class="user-field">
+      <label for="role-select">Your Role</label>
+      <select id="role-select">
+        <option value="">— Select your role —</option>
+        <option>IT / Power Platform Administrator</option>
+        <option>Security or Compliance Professional</option>
+        <option>Solution or Enterprise Architect</option>
+        <option>Adoption or Change Management Lead</option>
+        <option>Citizen Developer / Maker</option>
+        <option>Business Analyst or Process Owner</option>
+        <option>Manager or Team Lead</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="user-field">
+      <label for="org-input">Your Organisation <span style="color: var(--ink-muted); font-weight: 400; text-transform: none; letter-spacing: 0;">(optional)</span></label>
+      <input type="text" id="org-input" placeholder="e.g., Contoso">
+    </div>
+  </div>
+</div>
+
+<div class="activity-header">
+  <div class="activity-header-inner">
+    <div class="activity-header-num">!</div>
+    <div class="activity-header-content">
+      <h2>Triage 8 Security Recommendations</h2>
+      <p>Pick a priority and an owner for each. Skip the ones that don't apply.</p>
+    </div>
+  </div>
+</div>
+
+<div class="howto-banner">
+  <div class="howto-banner-inner">
+    <div class="icon">i</div>
+    <div class="text"><strong>How to use this:</strong> Read each recommendation. Decide if it's a High, Medium, or Low priority for your org &mdash; or mark it as Skip if it doesn't apply. Then type in who would own this work. Names, team names, or job titles are all fine.</div>
+  </div>
+</div>
+
+<section class="recommendations" id="recs-container"></section>
+
+<footer class="poster-footer">
+  <div class="poster-footer-left">
+    <div id="error-banner" class="error-banner"></div>
+    <button class="btn-primary" id="show-results-btn" disabled>Show my answers →</button>
+    <p style="font-size: 12px; color: var(--ink-muted); margin-top: 8px;" id="submit-hint">Triage at least 3 recommendations to enable the button.</p>
+  </div>
+  <div class="ms-logo">
+    <div class="ms-logo-tiles"><span></span><span></span><span></span><span></span></div>
+    <span>Microsoft</span>
+  </div>
+</footer>
+
+<section id="results-panel">
+  <div class="results-instructions">
+    <strong>Done — share your triage with your facilitator.</strong>
+    <p>Take a screenshot of the card below. On Windows: <kbd>Win</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd>. On Mac: <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>4</kbd>.</p>
+  </div>
+
+  <article class="results-poster" id="results-card">
+    <div class="results-poster-top-strip"></div>
+    <div class="results-poster-header">
+      <div>
+        <h2>Kickstarter Workshops</h2>
+        <div class="subtitle">Module 4 · Security Recommendations Triage</div>
+      </div>
+      <div class="results-poster-meta">
+        <div class="respondent" id="result-name">Anonymous Response</div>
+        <div id="result-org"></div>
+        <div id="result-date"></div>
+        <div class="role-tag" id="result-role">—</div>
+      </div>
+    </div>
+
+    <div class="results-summary" id="results-summary"></div>
+
+    <div id="result-sections"></div>
+
+    <div class="results-poster-footer">
+      <span class="brand-mini">Govern &amp; Secure AI Agents</span>
+      <span>Microsoft Kickstarter Workshops</span>
+    </div>
+  </article>
+
+  <div class="action-row">
+    <button class="action-btn primary" id="print-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print or save as PDF
+    </button>
+    <button class="action-btn" id="copy-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <span id="copy-btn-label">Copy as text</span>
+    </button>
+    <button class="action-btn" id="edit-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Edit my answers
+    </button>
+  </div>
+</section>
+
+<script>
+(function() {
+  const RECS = [
+    { title: 'Secure Power Platform content with IP address-based cookie binding', prompt: 'How does IP-based control prevent unauthorized agent use?' },
+    { title: 'Manage agent access through sharing settings', prompt: 'What happens if agents are shared too broadly across teams?' },
+    { title: 'Prevent unauthorized data extraction by enabling client application access control', prompt: 'How might agents unintentionally expose sensitive business data without this safeguard?' },
+    { title: 'Restrict Power Platform resource access to specific IP addresses using an IP firewall', prompt: 'How can limiting IPs reduce risks of rogue agent activity?' },
+    { title: 'Reduce security risks by limiting the number of administrators', prompt: 'Why does having too many admins increase the risk of unmonitored agent creation?' },
+    { title: 'Turn on tenant isolation for all environments in this tenant', prompt: 'How does isolation help protect sensitive agent data flows across environments?' },
+    { title: 'Limit resource access by adding a security group to the environment', prompt: 'How do security groups help control who can build and run agents?' },
+    { title: 'Prevent guest users from accessing resources and content', prompt: 'What are the risks if guest accounts can run or share agents?' },
+  ];
+
+  const PRIORITY_LABELS = { high: 'High Priority', med: 'Medium Priority', low: 'Low Priority', skip: 'Skip / N/A' };
+  const PRIORITY_ORDER = ['high', 'med', 'low', 'skip'];
+
+  const state = RECS.map(() => ({ priority: null, owner: '' }));
+
+  // Render rec cards
+  const container = document.getElementById('recs-container');
+  RECS.forEach((rec, i) => {
+    const card = document.createElement('div');
+    card.className = 'rec-card';
+    card.dataset.idx = i;
+    card.innerHTML = `
+      <div class="rec-head">
+        <div class="rec-num">${i + 1}</div>
+        <div class="rec-title-wrap">
+          <div class="rec-title">${rec.title}</div>
+          <div class="rec-prompt">${rec.prompt}</div>
+        </div>
+      </div>
+      <div class="rec-controls">
+        <div class="rec-control-block">
+          <label>Priority for your org</label>
+          <div class="priority-buttons">
+            <button type="button" class="priority-btn" data-p="high"><span class="dot"></span>High</button>
+            <button type="button" class="priority-btn" data-p="med"><span class="dot"></span>Medium</button>
+            <button type="button" class="priority-btn" data-p="low"><span class="dot"></span>Low</button>
+            <button type="button" class="priority-btn" data-p="skip"><span class="dot"></span>Skip</button>
+          </div>
+        </div>
+        <div class="rec-control-block">
+          <label>Likely owner (name, team or role)</label>
+          <input type="text" class="owner-input" placeholder="e.g., Security team, Jane Doe...">
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+
+    const buttons = card.querySelectorAll('.priority-btn');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const p = btn.dataset.p;
+        // Toggle: if already active, deactivate
+        if (state[i].priority === p) {
+          state[i].priority = null;
+          card.classList.remove('has-priority');
+          card.removeAttribute('data-priority');
+          buttons.forEach(b => b.classList.remove('active'));
+        } else {
+          state[i].priority = p;
+          card.classList.add('has-priority');
+          card.dataset.priority = p;
+          buttons.forEach(b => b.classList.toggle('active', b.dataset.p === p));
+        }
+        updateButton();
+      });
+    });
+
+    const ownerInput = card.querySelector('.owner-input');
+    ownerInput.addEventListener('input', () => {
+      state[i].owner = ownerInput.value;
+      updateButton();
+    });
+  });
+
+  const submitBtn = document.getElementById('show-results-btn');
+  const submitHint = document.getElementById('submit-hint');
+
+  function getCount() {
+    return state.filter(s => s.priority).length;
+  }
+
+  function updateButton() {
+    const count = getCount();
+    submitBtn.disabled = count < 3;
+    if (count >= 3) {
+      submitHint.textContent = `✓ ${count} recommendation${count === 1 ? '' : 's'} triaged. Click to see your action list.`;
+      submitHint.style.color = 'var(--success-green)';
+      submitHint.style.fontWeight = '600';
+    } else if (count > 0) {
+      submitHint.textContent = `${count} of 3 minimum triaged so far.`;
+      submitHint.style.color = 'var(--ink-muted)';
+      submitHint.style.fontWeight = '400';
+    } else {
+      submitHint.textContent = 'Triage at least 3 recommendations to enable the button.';
+      submitHint.style.color = 'var(--ink-muted)';
+      submitHint.style.fontWeight = '400';
+    }
+  }
+
+  const errBanner = document.getElementById('error-banner');
+  const resultsPanel = document.getElementById('results-panel');
+
+  function showError(msg) {
+    errBanner.textContent = msg;
+    errBanner.classList.add('shown');
+    errBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function clearError() {
+    errBanner.classList.remove('shown');
+    errBanner.textContent = '';
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  }
+
+  submitBtn.addEventListener('click', () => {
+    clearError();
+    const role = document.getElementById('role-select').value;
+    if (!role) {
+      showError('Please pick your role at the top of the page.');
+      return;
+    }
+
+    const name = document.getElementById('name-input').value.trim();
+    const org = document.getElementById('org-input').value.trim();
+    document.getElementById('result-name').textContent = name || 'Anonymous Response';
+    document.getElementById('result-org').textContent = org || '';
+    const dateStr = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('result-date').textContent = dateStr;
+    document.getElementById('result-role').textContent = role;
+
+    // Summary pills
+    const counts = { high: 0, med: 0, low: 0, skip: 0 };
+    state.forEach(s => { if (s.priority) counts[s.priority]++; });
+
+    const summary = document.getElementById('results-summary');
+    summary.innerHTML = '';
+    PRIORITY_ORDER.forEach(p => {
+      if (counts[p] > 0) {
+        const pill = document.createElement('div');
+        pill.className = 'summary-pill';
+        pill.dataset.p = p;
+        pill.innerHTML = `<span class="count">${counts[p]}</span> <span>${PRIORITY_LABELS[p]}</span>`;
+        summary.appendChild(pill);
+      }
+    });
+
+    // Sections grouped by priority
+    const sections = document.getElementById('result-sections');
+    sections.innerHTML = '';
+    PRIORITY_ORDER.forEach(p => {
+      const items = state.map((s, i) => ({ ...s, idx: i, rec: RECS[i] })).filter(s => s.priority === p);
+      if (items.length === 0) return;
+
+      const section = document.createElement('div');
+      section.className = 'result-section';
+      let rowsHtml = items.map(item => `
+        <div class="result-rec-row">
+          <div class="result-rec-num">${item.idx + 1}</div>
+          <div class="result-rec-text">
+            <div class="name">${escapeHtml(item.rec.title)}</div>
+            <div class="owner ${item.owner.trim() ? '' : 'unset'}">
+              ${item.owner.trim() ? '👤 Owner: ' + escapeHtml(item.owner) : '👤 Owner not yet assigned'}
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      section.innerHTML = `
+        <div class="result-section-banner" data-p="${p}">
+          <span class="label">${PRIORITY_LABELS[p]}</span>
+          <span class="count-text">${items.length} recommendation${items.length === 1 ? '' : 's'}</span>
+        </div>
+        ${rowsHtml}
+      `;
+      sections.appendChild(section);
+    });
+
+    resultsPanel.classList.add('shown');
+    setTimeout(() => resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+  });
+
+  document.getElementById('print-btn').addEventListener('click', () => window.print());
+
+  document.getElementById('copy-btn').addEventListener('click', () => {
+    const name = document.getElementById('result-name').textContent;
+    const org = document.getElementById('result-org').textContent;
+    const date = document.getElementById('result-date').textContent;
+    const role = document.getElementById('result-role').textContent;
+
+    const lines = [
+      'KICKSTARTER WORKSHOPS — SECURITY RECOMMENDATIONS TRIAGE',
+      'Govern & Secure AI Agents · Module 4',
+      '',
+      name,
+      org && 'Organisation: ' + org,
+      date,
+      'Role: ' + role,
+      '',
+    ].filter(Boolean);
+
+    PRIORITY_ORDER.forEach(p => {
+      const items = state.map((s, i) => ({ ...s, idx: i })).filter(s => s.priority === p);
+      if (items.length === 0) return;
+      lines.push('═══ ' + PRIORITY_LABELS[p].toUpperCase() + ' ═══');
+      lines.push('');
+      items.forEach(item => {
+        lines.push((item.idx + 1) + '. ' + RECS[item.idx].title);
+        lines.push('   Owner: ' + (item.owner.trim() || '(not yet assigned)'));
+        lines.push('');
+      });
+    });
+
+    navigator.clipboard.writeText(lines.join('\n')).then(() => {
+      const label = document.getElementById('copy-btn-label');
+      const orig = label.textContent;
+      label.textContent = 'Copied ✓';
+      setTimeout(() => label.textContent = orig, 2000);
+    }).catch(() => alert('Could not copy. Take a screenshot instead.'));
+  });
+
+  document.getElementById('edit-btn').addEventListener('click', () => {
+    resultsPanel.classList.remove('shown');
+    document.querySelector('.activity-header').scrollIntoView({ behavior: 'smooth' });
+  });
+})();
+</script>
+</body>
+</html>
